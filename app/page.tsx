@@ -1,56 +1,36 @@
-import { Link } from "@nextui-org/link";
-import { Snippet } from "@nextui-org/snippet";
-import { Code } from "@nextui-org/code";
-import { button as buttonStyles } from "@nextui-org/theme";
-
-import { siteConfig } from "@/config/site";
-import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
+import Logo from "@/public/AIPlogo.svg";
+import Image from "next/image";
+import TopBar from "@/components/topBar";
+import { Button } from "@nextui-org/button";
 
 export default function Home() {
   return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <div className="inline-block max-w-xl text-center justify-center">
-        <span className={title()}>Make&nbsp;</span>
-        <span className={title({ color: "violet" })}>beautiful&nbsp;</span>
-        <br />
-        <span className={title()}>
-          websites regardless of your design experience.
-        </span>
-        <div className={subtitle({ class: "mt-4" })}>
-          Beautiful, fast and modern React UI library.
-        </div>
+    <div className="w-screen">
+      <TopBar pageName="Home" />
+      <div className="pt-10 pl-10 font-bold text-2xl">
+        Welcome to AIP
       </div>
-
-      <div className="flex gap-3">
-        <Link
-          isExternal
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          href={siteConfig.links.docs}
-        >
-          Documentation
-        </Link>
-        <Link
-          isExternal
-          className={buttonStyles({ variant: "bordered", radius: "full" })}
-          href={siteConfig.links.github}
-        >
-          <GithubIcon size={20} />
-          GitHub
-        </Link>
+      <div className="pl-10 pt-3">
+        Abilities was founded in 1968 by Mr. R.S. Arora, initially focusing on manufacturing pistons and related components for the domestic
+        two-wheeler replacement market. In 1994, the company expanded to supply OEMs in the two- and three-wheeler segments, serving notable
+        clients like TVS and Greaves, while beginning exports to Italy. The manufacturing facilities have been upgraded multiple times since
+        1995 to meet international standards, and now nearly 50% of their output is exported to 35 countries.
       </div>
-
-      <div className="mt-8">
-        <Snippet hideCopyButton hideSymbol variant="bordered">
-          <span>
-            Get started by editing <Code color="primary">app/page.tsx</Code>
-          </span>
-        </Snippet>
+      <div className="w-full h-[250px] border-2 flex items-center justify-center text-3xl font-extrabold">
+        Vid here 
       </div>
-    </section>
+      <div className="pl-10 pt-3">
+        The company has built a strong reputation, attracting consistent orders and inquiries from domestic and international clients.
+        Abilities offers competitive pricing and quality as an OEM supplier to China and Japan. They received financial support from DSIR
+        for R&D, successfully implementing a new production process for pistons. Today, Abilities India Piston and Ring Ltd. is synonymous
+        with reliability and value, with a diverse product range and significant global presence since its first export order in 1993. Their
+        eco-friendly infrastructure spans 20,000 sq m, featuring ISO certifications and a dedicated R&D center.
+      </div>
+      <div className="w-screen px-10 pt-10">
+        <Button style={{background: '#17C6ED'}} className="w-full text-white text-xl h-12">
+        Book an Appointment
+        </Button>
+      </div>
+    </div>
   );
 }

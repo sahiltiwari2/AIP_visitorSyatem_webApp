@@ -1,9 +1,10 @@
-import { title } from "@/components/primitives";
+import Logo from "@/public/AIPlogo.svg";
+import Image from "next/image";
 
-export default function AboutPage() {
+export default function Home() {
   return (
-    <div>
-      <h1 className={title()}>About</h1>
+    <div className=' px-20 py-5'>
+        <Image src={Logo} alt='Logo'/>
     </div>
   );
 }
