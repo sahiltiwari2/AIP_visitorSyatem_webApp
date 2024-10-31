@@ -41,7 +41,7 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "ligit " }}>
           <div className="relative flex flex-col h-screen">
             {/* <TopBar /> */}
             <main className="container w-screen flex-grow">
