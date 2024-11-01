@@ -2,6 +2,7 @@ import Logo from "@/public/AIPlogo.svg";
 import Image from "next/image";
 import TopBar from "@/components/topBar";
 import { Button } from "@nextui-org/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -27,7 +28,7 @@ export default function Home() {
         eco-friendly infrastructure spans 20,000 sq m, featuring ISO certifications and a dedicated R&D center.
       </div>
       <div className="w-screen px-10 pt-10">
-        <Button style={{background: '#17C6ED'}} className="w-full text-white text-xl h-12">
+        <Button style={{background: '#17C6ED'}} className="w-full text-white text-xl h-12 " as={Link} href="/form">
         Book an Appointment
         </Button>
       </div>
