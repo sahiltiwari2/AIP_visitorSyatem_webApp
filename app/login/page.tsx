@@ -49,7 +49,7 @@ const login = () => {
       <div>
         New User ?
       </div>
-      <Link href={"/"}>
+      <Link href={"/signup"}>
       <div className='text-blue-500'>
         Sign up
       </div>

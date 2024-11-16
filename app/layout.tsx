@@ -34,23 +34,22 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang="en">
-      <head />
-      <body
-        className={clsx(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-        )}
-      >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "ligit" }}>
-          <div className="relative flex flex-col h-screen">
-            {/* <TopBar /> */}
-            <main className="container w-screen flex-grow">
-              {children}
-            </main>
-            <Navbar />
-          </div>
-        </Providers>
-      </body>
-    </html>
+    <head />
+    <body
+      className={clsx(
+        "min-h-screen bg-background font-sans antialiased",
+        fontSans.variable,
+      )}
+    >
+      <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
+        <div className="relative flex flex-col min-h-screen">
+          <main className="container w-full flex-grow">
+            {children}
+          </main>
+          <Navbar /> {/* Navbar stays at the bottom */}
+        </div>
+      </Providers>
+    </body>
+  </html>
   );
 }

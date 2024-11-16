@@ -27,31 +27,30 @@ import {
 } from "@/components/icons";
 
 export const Navbar = () => {
-
   return (
-    <>
-<div className="w-screen border-2 border-black rounded-md ">
-      <NextUINavbar maxWidth="full" position="sticky">
-          <NavbarContent className="basis-1/5 sm:basis-full " justify="center">
-            <ul className="hidden lg:flex gap-52 justify-start ml-2">
-              {siteConfig.navItems.map((item) => (
-                <NavbarItem key={item.href}>
-                  <NextLink
-                    className={clsx(
-                      linkStyles({ color: "foreground" }),
-                      "data-[active=true]:text-primary data-[active=true]:font-medium",
-                    )}
-                    color="foreground"
-                    href={item.href}
-                  >
-                    {item.label}
-                  </NextLink>
-                </NavbarItem>
-              ))}
-            </ul>
-          </NavbarContent>
-      </NextUINavbar>
-        </div>  
-    </>
+    <div className="w-full border-2 border-black rounded-md fixed bottom-0 left-0 z-50">
+  <NextUINavbar maxWidth="full">
+    <NavbarContent className="w-full">
+      <div className="flex justify-center items-center gap-24 w-full">
+        {siteConfig.navItems.map((item) => (
+          <NavbarItem key={item.href}>
+            <NextLink
+              className={clsx(
+                linkStyles({ color: "foreground" }),
+                "data-[active=true]:text-primary data-[active=true]:font-medium"
+              )}
+              color="foreground"
+              href={item.href}
+            >
+              {item.label}
+            </NextLink>
+          </NavbarItem>
+        ))}
+      </div>
+    </NavbarContent>
+  </NextUINavbar>
+</div>
+
   );
 };
+
