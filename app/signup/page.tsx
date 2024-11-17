@@ -11,9 +11,13 @@ import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation'
-
+import { getDatabase, ref, set } from "firebase/database";
+import { serialize } from 'v8'
 
 const signup = () => {
+
+    const db = getDatabase();
+
     const router = useRouter()
 
     const [name, setname] = useState("")
@@ -27,10 +31,15 @@ const signup = () => {
     const handelSignup = async () => {
         if (password === confirmPassword) {
             const res = await createUserWithEmailAndPassword(email, password)
+            set(ref(db, 'users/' +  email.split("@")[0]), {
+                username: name,
+                department: department,
+              });
             setname('');
             setemail('');
             setpassword('');
             setconfirmPassword('');
+            setdepartment('');
             toast.success('Account created', {
                 position: "top-left",
                 autoClose: 3000,
