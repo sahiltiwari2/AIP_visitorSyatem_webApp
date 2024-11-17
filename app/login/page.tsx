@@ -1,11 +1,28 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
 import TopBar from '@/components/topBar'
 import { Input } from '@nextui-org/input'
 import { Button } from '@nextui-org/button'
 import Link from 'next/link'
 import { Divider } from '@nextui-org/react'
+import {useSignInWithEmailAndPassword} from "react-firebase-hooks/auth"
+import {auth} from '@/firebase'
+import { useRouter } from 'next/navigation' 
 
 const login = () => {
+  const [email, setemail] = useState("")
+  const [password, setpassword] = useState("")
+
+  const router = useRouter()
+
+  const [SignInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth)
+  
+  const handelSingIn = async() => {
+    const res = await SignInWithEmailAndPassword(email,password)
+    setemail('');
+    setpassword('');
+    router.push('/')
+  }
   return (
     <div>
       <TopBar pageName='Login' />
@@ -16,6 +33,8 @@ const login = () => {
           labelPlacement="outside"
           placeholder="Enter your email"
           className='p-5 '
+          value={email}
+          onChange={(e) => setemail(e.target.value)}
         />
 
         <Input
@@ -24,12 +43,14 @@ const login = () => {
           labelPlacement="outside"
           placeholder="Enter your password here"
           className='p-5 '
+          value={password}
+          onChange={(e) => setpassword(e.target.value)}
         />
       </div>
       <div className="w-screen pt-2 ">
         <div className='px-5'>
-          <Button style={{ background: '#17C6ED' }} className="w-full text-white text-xl h-11 " as={Link} href="/form">
-            Book an Appointment
+          <Button style={{ background: '#17C6ED' }} className="w-full text-white text-xl h-11 " onClick={handelSingIn}>
+           Login
           </Button>
         </div>
         <div className='w-screen flex flex-row pt-5  px-10'>
@@ -50,7 +71,7 @@ const login = () => {
         New User ?
       </div>
       <Link href={"/signup"}>
-      <div className='text-blue-500'>
+      <div className='text-blue-500' >
         Sign up
       </div>
       </Link>

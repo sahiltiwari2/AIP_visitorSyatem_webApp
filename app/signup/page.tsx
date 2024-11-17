@@ -7,13 +7,57 @@ import Link from 'next/link'
 import { Divider } from '@nextui-org/react'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import {auth} from "@/firebase"
+import {useCreateUserWithEmailAndPassword} from "react-firebase-hooks/auth"
+import {ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/navigation'
 
 
 const signup = () => {
+    const router = useRouter()
+
     const [name, setname] = useState("")
     const [email, setemail] = useState("")
     const [password, setpassword] = useState("")
     const [confirmPassword, setconfirmPassword] = useState("")
+
+    const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
+
+    const handelSignup = async() => {
+        if (password === confirmPassword) {
+            const res = await createUserWithEmailAndPassword(email, password)
+            setname('');
+            setemail('');
+            setpassword('');
+            setconfirmPassword('');
+            toast.success('Account created', {
+                position: "top-left",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                });
+                setTimeout(() => {
+                    router.push('/');
+                }, 3000);
+        }
+        else{
+            toast.error('Password does not match', {
+                position: "top-left",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                });
+        }
+
+    }
     return (
         <div>
             <TopBar pageName='SignUp' />
@@ -30,7 +74,7 @@ const signup = () => {
 
                 <Input
                     type="email"
-                    label="Username / Email"
+                    label="Email"
                     labelPlacement="outside"
                     placeholder="Enter your email"
                     className='p-5 '
@@ -60,8 +104,8 @@ const signup = () => {
             </div>
             <div className="w-screen pt-2 ">
                 <div className='px-5'>
-                    <Button style={{ background: '#17C6ED' }} className="w-full text-white text-xl h-11 " as={Link} href="/form">
-                        Book an Appointment
+                    <Button style={{ background: '#17C6ED' }} className="w-full text-white text-xl h-11 " onClick={handelSignup}>
+                        Sign up
                     </Button>
                 </div>
                 <div className='w-screen flex flex-row pt-5  px-10'>
@@ -87,6 +131,7 @@ const signup = () => {
                     </div>
                 </Link>
             </div>
+            <ToastContainer />
         </div>
     )
 }
