@@ -20,13 +20,6 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
-};
-
 export default function RootLayout({
   children,
 }: {
@@ -34,22 +27,23 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang="en">
-    <head />
-    <body
-      className={clsx(
-        "min-h-screen bg-background font-sans antialiased",
-        fontSans.variable,
-      )}
-    >
-      <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
-        <div className="relative flex flex-col min-h-screen">
-          <main className="container w-full flex-grow">
-            {children}
-          </main>
-          <Navbar /> {/* Navbar stays at the bottom */}
-        </div>
-      </Providers>
-    </body>
-  </html>
+      <head />
+      <body
+        className={clsx(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
+          <div className="relative flex flex-col min-h-screen">
+            {/* Adjusted main element to have bottom padding */}
+            <main className="container w-full flex-grow pb-16">
+              {children}
+            </main>
+            <Navbar /> {/* Navbar stays at the bottom */}
+          </div>
+        </Providers>
+      </body>
+    </html>
   );
 }

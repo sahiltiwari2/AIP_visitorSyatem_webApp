@@ -6,9 +6,9 @@ import { Button } from '@nextui-org/button'
 import Link from 'next/link'
 import { Divider } from '@nextui-org/react'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import {auth} from "@/firebase"
-import {useCreateUserWithEmailAndPassword} from "react-firebase-hooks/auth"
-import {ToastContainer, toast } from 'react-toastify';
+import { auth } from "@/firebase"
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation'
 
@@ -17,13 +17,14 @@ const signup = () => {
     const router = useRouter()
 
     const [name, setname] = useState("")
+    const [department, setdepartment] = useState("")
     const [email, setemail] = useState("")
     const [password, setpassword] = useState("")
     const [confirmPassword, setconfirmPassword] = useState("")
 
     const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
 
-    const handelSignup = async() => {
+    const handelSignup = async () => {
         if (password === confirmPassword) {
             const res = await createUserWithEmailAndPassword(email, password)
             setname('');
@@ -39,12 +40,12 @@ const signup = () => {
                 draggable: true,
                 progress: undefined,
                 theme: "dark",
-                });
-                setTimeout(() => {
-                    router.push('/');
-                }, 3000);
+            });
+            setTimeout(() => {
+                router.push('/');
+            }, 3000);
         }
-        else{
+        else {
             toast.error('Password does not match', {
                 position: "top-left",
                 autoClose: 5000,
@@ -54,12 +55,12 @@ const signup = () => {
                 draggable: true,
                 progress: undefined,
                 theme: "dark",
-                });
+            });
         }
 
     }
     return (
-        <div>
+        <div >
             <TopBar pageName='SignUp' />
             <div className='w-screen'>
                 <Input
@@ -71,6 +72,17 @@ const signup = () => {
                     value={name}
                     onChange={(e) => setname(e.target.value)}
                 />
+
+                <Input
+                    type="text"
+                    label="Department"
+                    labelPlacement="outside"
+                    placeholder="Enter your department"
+                    className='p-5 '
+                    value={department}
+                    onChange={(e) => setdepartment(e.target.value)}
+                />
+
 
                 <Input
                     type="email"
