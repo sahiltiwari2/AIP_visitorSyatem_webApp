@@ -6,10 +6,12 @@ import { Button, Select, SelectItem } from '@nextui-org/react';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {animals} from "@/data";
+
 
 const Form = () => {
   const numbers = [1, 2, 3, 4, 5];
-  
+
   const [name, setname] = useState('');
   const [email, setemail] = useState('');
   const [number, setnumber] = useState('');
@@ -18,9 +20,11 @@ const Form = () => {
   const [visitors, setVisitors] = useState('');
   const [representativeEmail, setRepresentativeEmail] = useState('');
 
+  
+
   const handleSubmit = async () => {
     const formData = { name, email, number, date, purpose, visitors, representativeEmail };
-  
+
     try {
       const response = await fetch('/api/sendEmail', {
         method: 'POST',
@@ -29,7 +33,7 @@ const Form = () => {
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (response.ok) {
         toast.success('Email sent successfully!', {
           position: 'top-left',
@@ -67,7 +71,7 @@ const Form = () => {
       });
     }
   };
-  
+
 
   return (
     <div>
@@ -123,18 +127,19 @@ const Form = () => {
             value={purpose}
             onChange={(e) => setpurpose(e.target.value)}
           />
+          
           <Select
-            label="Number of visitors"
-            placeholder="Select a number"
-            className="pt-5"
-            onChange={(e) => setVisitors(e.target.value)}
+            label="Number of Visitors"
+            placeholder="Select an Number"
+            className="w-full pt-5"
           >
-            {numbers.map((number) => (
-              <SelectItem key={number} value={number.toString()}>
-                {number}
+            {animals.map((animal) => (
+              <SelectItem key={animal.key}>
+                {animal.label}
               </SelectItem>
             ))}
           </Select>
+          
           <Input
             type="email"
             variant="bordered"

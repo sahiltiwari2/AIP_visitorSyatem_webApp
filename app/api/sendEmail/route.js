@@ -6,14 +6,14 @@ export async function POST(req) {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-      user: 'sahiltiwari2005@gmail.com', 
-      pass: '**** **** ****',       
+      user: 'sahiltiwari2005@gmail.com',
+      pass: '**** **** **** ****',
     },
   });
 
   const mailOptions = {
     from: 'sahiltiwari2005@gmail.com',
-    to: representativeEmail,
+    to: 'sahiltiwari2005@gmail.com',
     subject: 'New Appointment Request',
     text: `
       Full Name: ${name}
