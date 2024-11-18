@@ -14,12 +14,10 @@ export const Navbar = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Listen for Firebase Auth state changes
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
@@ -29,7 +27,6 @@ export const Navbar = () => {
         <NavbarContent className="w-full">
           <div className="flex justify-center items-center gap-24 w-full">
             {siteConfig.navItems.map((item) => {
-              // Replace "Login" with "Profile" if the user is logged in
               if (item.label === "Login" && user) {
                 return (
                   <NavbarItem key="profile">

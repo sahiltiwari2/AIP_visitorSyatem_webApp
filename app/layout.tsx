@@ -36,11 +36,10 @@ export default function RootLayout({
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
           <div className="relative flex flex-col min-h-screen">
-            {/* Adjusted main element to have bottom padding */}
             <main className="container w-full flex-grow pb-16">
               {children}
             </main>
-            <Navbar /> {/* Navbar stays at the bottom */}
+            <Navbar /> 
           </div>
         </Providers>
       </body>
