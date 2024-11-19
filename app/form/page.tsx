@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { animals, departments } from "@/data";
 import { ClipLoader } from 'react-spinners';
 import { Navbar } from "@/components/navbar";
+import { getDatabase, ref, set } from "firebase/database";
 
 const Form = () => {
   const numbers = [1, 2, 3, 4, 5];
@@ -39,16 +40,13 @@ const Form = () => {
     setVisitorNumbers(updatedVisitorNumbers);
   };
 
-  // Handle number of visitors change and adjust input fields accordingly
   const handleVisitorsChange = (value: string) => {
     setVisitors(value);
 
-    // Convert the selected value to a number and update the visitorNames array length
     const numVisitors = parseInt(value, 10);
-    setVisitorNames(Array(numVisitors).fill("")); // Initialize input fields with empty values
+    setVisitorNames(Array(numVisitors).fill("")); 
   };
 
-  // Handle change in individual visitor input fields
   const handleVisitorNameChange = (index: number, value: string) => {
     const updatedVisitorNames = [...visitorNames];
     updatedVisitorNames[index] = value;
@@ -90,6 +88,22 @@ const Form = () => {
           draggable: true,
           progress: undefined,
           theme: 'dark',
+        });
+        
+        const db = getDatabase();
+        set(ref(db, 'appointmentsPending/' + email.split("@")[0]), {
+          name: name,
+          email: email,
+          phonenumber : number,
+          dateOfVisit : date,
+          purposeOfVisit: purpose,
+          numberOfVisitors : visitors,
+          visitorsNames : visitorNames,
+          visitorsEmails : visitorEmails,
+          visitorsNumbers : visitorNumbers,
+          representativeEmail : representativeEmail,
+          departmentOfWork : department,
+          approvalStatus : "Pending"
         });
       } else {
         console.log("Failed to send email");
