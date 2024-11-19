@@ -15,7 +15,7 @@ export async function POST(req) {
   if (department === "hr") {
     const mailOptions = {
       from: 'sahiltiwari2005@gmail.com',
-      to: 'sahiltiwari2005@gmail.com', 
+      to: '240aayushmishra@gmail.com', 
       subject: 'New Appointment Request',
       text: `
         Full Name: ${name}
@@ -40,7 +40,7 @@ export async function POST(req) {
   if (department === 'development') {
     const mailOptions = {
       from: 'sahiltiwari2005@gmail.com',
-      to: '3922.sahiltiwari@gmail.com', 
+      to: 'aayushmishra82017@gmail.com', 
       subject: 'New Appointment Request',
       text: `
         Full Name: ${name}
