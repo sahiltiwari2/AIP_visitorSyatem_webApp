@@ -8,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { animals, departments } from "@/data";
 import { ClipLoader } from 'react-spinners';
+import { Navbar } from "@/components/navbar";
 
 
 const Form = () => {
@@ -62,6 +63,7 @@ const Form = () => {
 
   return (
     <div>
+      
       <TopBar pageName="Appointment Form" />
       <div className="w-screen overflow-x-hidden">
         <div className="p-5 max-w-4xl mx-auto">
