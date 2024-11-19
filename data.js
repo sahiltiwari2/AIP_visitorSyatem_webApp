@@ -10,3 +10,9 @@ export const animals = [
   {key: "9", label: "9"},
   {key: "10", label: "10"}
 ];
+
+
+export const departments = [
+  { key: "hr", label: "HR" },
+  { key: "development", label: "Development" }
+];

@@ -2,11 +2,12 @@
 import React, { useState } from 'react';
 import TopBar from '@/components/topBar';
 import { Input } from '@nextui-org/input';
-import { Button, Select, SelectItem } from '@nextui-org/react';
+import { Button, Select, SelectItem} from '@nextui-org/react';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {animals} from "@/data";
+import { animals, departments } from "@/data";
+import { ClipLoader } from 'react-spinners';
 
 
 const Form = () => {
@@ -19,11 +20,14 @@ const Form = () => {
   const [purpose, setpurpose] = useState('');
   const [visitors, setVisitors] = useState('');
   const [representativeEmail, setRepresentativeEmail] = useState('');
+  const [department, setDepartment] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  
+
 
   const handleSubmit = async () => {
-    const formData = { name, email, number, date, purpose, visitors, representativeEmail };
+    setIsLoading(true);
+    const formData = { name, email, number, date, purpose, visitors, representativeEmail, department };
 
     try {
       const response = await fetch('/api/sendEmail', {
@@ -46,29 +50,12 @@ const Form = () => {
           theme: 'dark',
         });
       } else {
-        toast.error('Failed to send email.', {
-          position: 'top-left',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'dark',
-        });
+        console.log("Failed to send email")
       }
     } catch (error) {
       console.error(error);
-      toast.error('An error occurred while sending the email.', {
-        position: 'top-left',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'dark',
-      });
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -127,11 +114,13 @@ const Form = () => {
             value={purpose}
             onChange={(e) => setpurpose(e.target.value)}
           />
-          
+
           <Select
             label="Number of Visitors"
             placeholder="Select an Number"
             className="w-full pt-5"
+            value={visitors}
+            onChange={(e) => setVisitors(e.target.value)}
           >
             {animals.map((animal) => (
               <SelectItem key={animal.key}>
@@ -139,7 +128,7 @@ const Form = () => {
               </SelectItem>
             ))}
           </Select>
-          
+
           <Input
             type="email"
             variant="bordered"
@@ -149,12 +138,31 @@ const Form = () => {
             value={representativeEmail}
             onChange={(e) => setRepresentativeEmail(e.target.value)}
           />
+
+          <Select
+            label="Department"
+            placeholder="Select a Department"
+            className="w-full pt-5 mb-8"
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+          >
+            {departments.map((department) => (
+              <SelectItem key={department.key} value={department.key}>
+                {department.label}
+              </SelectItem>
+            ))}
+          </Select>
           <Button
             style={{ background: '#17C6ED' }}
             className="w-full text-white text-xl h-12"
             onClick={handleSubmit}
+            disabled={isLoading}
           >
-            Book an Appointment
+            {isLoading ? (
+              <ClipLoader color="#fff" size={20} /> 
+            ) : (
+              'Book an Appointment'
+            )}
           </Button>
           <div className="pt-5">
             <Button color="danger" variant="flat" className="w-full text-xl h-12" as={Link} href="/">
