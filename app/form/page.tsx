@@ -2,14 +2,13 @@
 import React, { useState } from 'react';
 import TopBar from '@/components/topBar';
 import { Input } from '@nextui-org/input';
-import { Button, Select, SelectItem} from '@nextui-org/react';
+import { Button, Select, SelectItem } from '@nextui-org/react';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { animals, departments } from "@/data";
 import { ClipLoader } from 'react-spinners';
 import { Navbar } from "@/components/navbar";
-
 
 const Form = () => {
   const numbers = [1, 2, 3, 4, 5];
@@ -20,15 +19,57 @@ const Form = () => {
   const [date, setdate] = useState('');
   const [purpose, setpurpose] = useState('');
   const [visitors, setVisitors] = useState('');
+  const [visitorNames, setVisitorNames] = useState<string[]>([]); // Array to store visitor names
   const [representativeEmail, setRepresentativeEmail] = useState('');
   const [department, setDepartment] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [visitorEmails, setVisitorEmails] = useState<string[]>([]);
+  const [visitorNumbers, setVisitorNumbers] = useState<string[]>([]);
 
 
+  const handleVisitorEmailChange = (index: number, value: string) => {
+    const updatedVisitorEmails = [...visitorEmails];
+    updatedVisitorEmails[index] = value;
+    setVisitorEmails(updatedVisitorEmails);
+  };
+
+  const handleVisitorNumberChange = (index: number, value: string) => {
+    const updatedVisitorNumbers = [...visitorNumbers];
+    updatedVisitorNumbers[index] = value;
+    setVisitorNumbers(updatedVisitorNumbers);
+  };
+
+  // Handle number of visitors change and adjust input fields accordingly
+  const handleVisitorsChange = (value: string) => {
+    setVisitors(value);
+
+    // Convert the selected value to a number and update the visitorNames array length
+    const numVisitors = parseInt(value, 10);
+    setVisitorNames(Array(numVisitors).fill("")); // Initialize input fields with empty values
+  };
+
+  // Handle change in individual visitor input fields
+  const handleVisitorNameChange = (index: number, value: string) => {
+    const updatedVisitorNames = [...visitorNames];
+    updatedVisitorNames[index] = value;
+    setVisitorNames(updatedVisitorNames);
+  };
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    const formData = { name, email, number, date, purpose, visitors, representativeEmail, department };
+    const formData = {
+      name,
+      email,
+      number,
+      date,
+      purpose,
+      visitors,
+      visitorNames, 
+      visitorEmails,
+      visitorNumbers,
+      representativeEmail,
+      department
+    };
 
     try {
       const response = await fetch('/api/sendEmail', {
@@ -51,19 +92,17 @@ const Form = () => {
           theme: 'dark',
         });
       } else {
-        console.log("Failed to send email")
+        console.log("Failed to send email");
       }
     } catch (error) {
       console.error(error);
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
 
-
   return (
     <div>
-      
       <TopBar pageName="Appointment Form" />
       <div className="w-screen overflow-x-hidden">
         <div className="p-5 max-w-4xl mx-auto">
@@ -94,7 +133,7 @@ const Form = () => {
             type="number"
             variant="bordered"
             label="Number"
-            placeholder="Enter your Number"
+            placeholder="Enter your Phone Number"
             className="pt-5"
             value={number}
             onChange={(e) => setnumber(e.target.value)}
@@ -119,17 +158,59 @@ const Form = () => {
 
           <Select
             label="Number of Visitors"
-            placeholder="Select an Number"
+            placeholder="Select a Number"
             className="w-full pt-5"
             value={visitors}
-            onChange={(e) => setVisitors(e.target.value)}
+            onChange={(e) => handleVisitorsChange(e.target.value)}
           >
-            {animals.map((animal) => (
-              <SelectItem key={animal.key}>
-                {animal.label}
+            {numbers.map((num) => (
+              <SelectItem key={num} value={num.toString()}>
+                {num}
               </SelectItem>
             ))}
           </Select>
+
+          
+          {visitorNames.map((visitorName, index) => (
+            <div className='grid grid-cols-3 gap-3'>
+              <div className=''>
+                <Input
+                  key={index}
+                  type="text"
+                  variant="bordered"
+                  label={`Visitor ${index + 1}'s Name`}
+                  placeholder={`Enter Visitor Name`}
+                  className="pt-5"
+                  value={visitorName}
+                  onChange={(e) => handleVisitorNameChange(index, e.target.value)}
+                />
+              </div>
+              <div className=''>
+                <Input
+                  key={index}
+                  type="text"
+                  variant="bordered"
+                  label={`Visitor ${index + 1}'s Email`}
+                  placeholder={`Enter Visitor Email`}
+                  className="pt-5"
+                  value={visitorEmails[index]}
+                  onChange={(e) => handleVisitorEmailChange(index, e.target.value)}
+                />
+              </div>
+              <div className=''>
+                <Input
+                  key={index}
+                  type="text"
+                  variant="bordered"
+                  label={`Visitor ${index + 1}'s Number`}
+                  placeholder={`Enter Visitor Phone Number`}
+                  className="pt-5"
+                  value={visitorNumbers[index]}
+                  onChange={(e) => handleVisitorNumberChange(index, e.target.value)}
+                />
+              </div>
+            </div>
+          ))}
 
           <Input
             type="email"
@@ -154,6 +235,7 @@ const Form = () => {
               </SelectItem>
             ))}
           </Select>
+
           <Button
             style={{ background: '#17C6ED' }}
             className="w-full text-white text-xl h-12"
@@ -161,7 +243,7 @@ const Form = () => {
             disabled={isLoading}
           >
             {isLoading ? (
-              <ClipLoader color="#fff" size={20} /> 
+              <ClipLoader color="#fff" size={20} />
             ) : (
               'Book an Appointment'
             )}

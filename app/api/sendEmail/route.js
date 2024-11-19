@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 
 export async function POST(req) {
-  const { name, email, number, date, purpose, visitors,representativeEmail, department } = await req.json();
+  const { name, email, number, date, purpose, visitors, visitorNames, visitorEmails, visitorNumbers, representativeEmail, department } = await req.json();
 
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -15,7 +15,7 @@ export async function POST(req) {
   if (department === "hr") {
     const mailOptions = {
       from: 'sahiltiwari2005@gmail.com',
-      to: '240aayushmishra@gmail.com', 
+      to: 'sahiltiwari2005@gmail.com', 
       subject: 'New Appointment Request',
       text: `
         Full Name: ${name}
@@ -24,6 +24,9 @@ export async function POST(req) {
         Date of Visit: ${date}
         Purpose of Visit: ${purpose}
         Number of Visitors: ${visitors}
+        Name of Vistors: ${visitorNames}
+        Email of Vistors: ${visitorEmails}
+        Number of Vistors: ${visitorNumbers}
         Representative Email: ${representativeEmail}
       `,
     };
@@ -40,7 +43,7 @@ export async function POST(req) {
   if (department === 'development') {
     const mailOptions = {
       from: 'sahiltiwari2005@gmail.com',
-      to: 'aayushmishra82017@gmail.com', 
+      to: 'sahiltiwari2005@gmail.com', 
       subject: 'New Appointment Request',
       text: `
         Full Name: ${name}
@@ -49,6 +52,9 @@ export async function POST(req) {
         Date of Visit: ${date}
         Purpose of Visit: ${purpose}
         Number of Visitors: ${visitors}
+        Name of Vistors: ${visitorNames}
+        Email of Vistors: ${visitorEmails}
+        Number of Vistors: ${visitorNumbers}
         Representative Email: ${representativeEmail}
       `,
     };
