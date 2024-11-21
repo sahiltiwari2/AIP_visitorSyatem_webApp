@@ -23,6 +23,7 @@ const Form = () => {
   const [visitorNames, setVisitorNames] = useState<string[]>([]); // Array to store visitor names
   const [representativeEmail, setRepresentativeEmail] = useState('');
   const [department, setDepartment] = useState('');
+  const [TimeofMeeting, setTimeofMeeting] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [visitorEmails, setVisitorEmails] = useState<string[]>([]);
   const [visitorNumbers, setVisitorNumbers] = useState<string[]>([]);
@@ -44,7 +45,7 @@ const Form = () => {
     setVisitors(value);
 
     const numVisitors = parseInt(value, 10);
-    setVisitorNames(Array(numVisitors).fill("")); 
+    setVisitorNames(Array(numVisitors).fill(""));
   };
 
   const handleVisitorNameChange = (index: number, value: string) => {
@@ -61,8 +62,9 @@ const Form = () => {
       number,
       date,
       purpose,
+      TimeofMeeting,
       visitors,
-      visitorNames, 
+      visitorNames,
       visitorEmails,
       visitorNumbers,
       representativeEmail,
@@ -89,21 +91,22 @@ const Form = () => {
           progress: undefined,
           theme: 'dark',
         });
-        
+
         const db = getDatabase();
         set(ref(db, 'appointmentsPending/' + email.split("@")[0]), {
           name: name,
           email: email,
-          phonenumber : number,
-          dateOfVisit : date,
+          phonenumber: number,
+          dateOfVisit: date,
           purposeOfVisit: purpose,
-          numberOfVisitors : visitors,
-          visitorsNames : visitorNames,
-          visitorsEmails : visitorEmails,
-          visitorsNumbers : visitorNumbers,
-          representativeEmail : representativeEmail,
-          departmentOfWork : department,
-          approvalStatus : "Pending"
+          numberOfVisitors: visitors,
+          timeOfVist : TimeofMeeting,
+          visitorsNames: visitorNames,
+          visitorsEmails: visitorEmails,
+          visitorsNumbers: visitorNumbers,
+          representativeEmail: representativeEmail,
+          departmentOfWork: department,
+          approvalStatus: "Pending"
         });
       } else {
         console.log("Failed to send email");
@@ -184,7 +187,7 @@ const Form = () => {
             ))}
           </Select>
 
-          
+
           {visitorNames.map((visitorName, index) => (
             <div className='grid grid-cols-3 gap-3'>
               <div className=''>
@@ -232,9 +235,12 @@ const Form = () => {
             label="Representative's Email Address"
             placeholder="Enter Email Address"
             className="pt-5 pb-5"
+            
             value={representativeEmail}
             onChange={(e) => setRepresentativeEmail(e.target.value)}
           />
+
+          <Input type="time" id="appt" name="appt" min="09:00" max="18:00" label='Select time for the meeting' value={TimeofMeeting} onChange={(e) => setTimeofMeeting(e.target.value)} required variant='bordered' description="Working hours from 9 AM to 6 PM" />
 
           <Select
             label="Department"

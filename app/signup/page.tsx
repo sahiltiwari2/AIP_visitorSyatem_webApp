@@ -5,19 +5,15 @@ import { Input } from '@nextui-org/input'
 import { Button } from '@nextui-org/button'
 import Link from 'next/link'
 import { Divider } from '@nextui-org/react'
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase"
+import { getAuth, createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, provider, database } from "@/firebase"
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation'
-import { getDatabase, ref, set } from "firebase/database";
-import { serialize } from 'v8'
+import { ref, set } from "firebase/database";
 
 const signup = () => {
-
-    const db = getDatabase();
-
     const router = useRouter()
 
     const [name, setname] = useState("")
@@ -28,48 +24,57 @@ const signup = () => {
 
     const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
 
-    const handelSignup = async () => {
+    const handleSignup = async () => {
         if (password === confirmPassword) {
-            const res = await createUserWithEmailAndPassword(email, password)
-            set(ref(db, 'users/' +  email.split("@")[0]), {
-                username: name,
-                department: department,
-              });
-            setname('');
-            setemail('');
-            setpassword('');
-            setconfirmPassword('');
-            setdepartment('');
-            toast.success('Account created', {
-                position: "top-left",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
+            try {
+                const res = await createUserWithEmailAndPassword(email, password);
+                await set(ref(database, 'users/' + email.split("@")[0]), {
+                    username: name,
+                    department: department,
+                });
+                setname('');
+                setemail('');
+                setpassword('');
+                setconfirmPassword('');
+                setdepartment('');
+                toast.success('Account created', {
+                    position: "top-left",
+                    autoClose: 3000,
+                    theme: "dark",
+                });
+                setTimeout(() => {
+                    router.push('/');
+                }, 3000);
+            } catch (error) {
+                // toast.error(error.message, { position: "top-left", theme: "dark" });
+            }
+        } else {
+            toast.error('Password does not match', { position: "top-left", theme: "dark" });
+        }
+    }
+
+    const handleGoogleSignIn = async () => {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            // Save user data to the database
+            await set(ref(database, 'users/' + user.uid), {
+                username: user.displayName,
+                email: user.email,
             });
+
+            toast.success('Logged in with Google!', { position: "top-left", theme: "dark" });
             setTimeout(() => {
                 router.push('/');
-            }, 3000);
+            }, 2000);
+        } catch (error) {
+            // toast.error(error.message, { position: "top-left", theme: "dark" });
         }
-        else {
-            toast.error('Password does not match', {
-                position: "top-left",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            });
-        }
-
     }
+
     return (
-        <div >
+        <div>
             <TopBar pageName='SignUp' />
             <div className='w-screen'>
                 <Input
@@ -91,7 +96,6 @@ const signup = () => {
                     value={department}
                     onChange={(e) => setdepartment(e.target.value)}
                 />
-
 
                 <Input
                     type="email"
@@ -117,7 +121,7 @@ const signup = () => {
                     type="password"
                     label="Confirm Password"
                     labelPlacement="outside"
-                    placeholder="Enter your password here"
+                    placeholder="Confirm your password"
                     className='p-5 '
                     value={confirmPassword}
                     onChange={(e) => setconfirmPassword(e.target.value)}
@@ -125,11 +129,11 @@ const signup = () => {
             </div>
             <div className="w-screen pt-2 ">
                 <div className='px-5'>
-                    <Button style={{ background: '#17C6ED' }} className="w-full text-white text-xl h-11 " onClick={handelSignup}>
+                    <Button style={{ background: '#17C6ED' }} className="w-full text-white text-xl h-11" onClick={handleSignup}>
                         Sign up
                     </Button>
                 </div>
-                <div className='w-screen flex flex-row pt-5  px-10'>
+                <div className='w-screen flex flex-row pt-5 px-10'>
                     <Divider className="my-4 w-5/12" />
                     <div className='text-center px-20 pt-1 font-bold'>
                         OR
@@ -137,14 +141,14 @@ const signup = () => {
                     <Divider className="my-4 w-5/12" />
                 </div>
                 <div className='px-5'>
-                    <Button color="primary" variant="ghost" className='w-full h-11 text-xl mt-4'>
+                    <Button color="primary" variant="ghost" className='w-full h-11 text-xl mt-4' onClick={handleGoogleSignIn}>
                         Login Using Google
                     </Button>
                 </div>
             </div>
-            <div className='flex flex-row gap-2 justify-center  w-screen mt-3'>
+            <div className='flex flex-row gap-2 justify-center w-screen mt-3'>
                 <div>
-                    Old User ?
+                    Old User?
                 </div>
                 <Link href={"/login"}>
                     <div className='text-blue-500'>
@@ -157,4 +161,4 @@ const signup = () => {
     )
 }
 
-export default signup
+export default signup;

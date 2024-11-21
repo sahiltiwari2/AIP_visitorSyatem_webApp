@@ -6,8 +6,11 @@ import { Button } from '@nextui-org/button'
 import Link from 'next/link'
 import { Divider } from '@nextui-org/react'
 import {useSignInWithEmailAndPassword} from "react-firebase-hooks/auth"
-import {auth} from '@/firebase'
+import {auth, database, provider} from '@/firebase'
 import { useRouter } from 'next/navigation' 
+import { signInWithPopup } from 'firebase/auth'
+import { ref, set } from 'firebase/database'
+import { toast } from 'react-toastify'
 
 const login = () => {
   const [email, setemail] = useState("")
@@ -23,6 +26,26 @@ const login = () => {
     setpassword('');
     router.push('/')
   }
+  const handleGoogleSignIn = async () => {
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // Save user data to the database
+        await set(ref(database, 'users/' + user.uid), {
+            username: user.displayName,
+            email: user.email,
+        });
+
+        toast.success('Logged in with Google!', { position: "top-left", theme: "dark" });
+        setTimeout(() => {
+            router.push('/');
+        }, 2000);
+    } catch (error) {
+        // toast.error(error.message, { position: "top-left", theme: "dark" });
+    }
+}
+
   return (
     <div>
       <TopBar pageName='Login' />
@@ -61,7 +84,7 @@ const login = () => {
           <Divider className="my-4 w-5/12" />
         </div>
         <div className='px-5'>
-          <Button color="primary" variant="ghost" className='w-full h-11 text-xl mt-4'>
+          <Button onClick={handleGoogleSignIn} color="primary" variant="ghost" className='w-full h-11 text-xl mt-4'>
             Login Using Google
           </Button>
         </div>
