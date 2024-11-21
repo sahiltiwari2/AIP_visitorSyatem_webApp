@@ -93,24 +93,22 @@ const Form = () => {
         });
 
         const db = getDatabase();
-        set(ref(db, 'appointmentsPending/'+ department + '/' + email.split("@")[0]), {
-          name: name,
-          email: email,
-          phonenumber: number,
-          dateOfVisit: date,
-          purposeOfVisit: purpose,
-          numberOfVisitors: visitors,
-          timeOfVist : TimeofMeeting,
-          visitorsNames: visitorNames,
-          visitorsEmails: visitorEmails,
-          visitorsNumbers: visitorNumbers,
-          representativeEmail: representativeEmail,
-          departmentOfWork: department,
-          approvalStatus: "Pending"
-        });
-      } else {
-        console.log("Failed to send email");
-      }
+          set(ref(db, 'appointmentsPending/' + '/' + email.split("@")[0]), {
+            name: name,
+            email: email,
+            phonenumber: number,
+            dateOfVisit: date,
+            purposeOfVisit: purpose,
+            numberOfVisitors: visitors,
+            timeOfVist: TimeofMeeting,
+            visitorsNames: visitorNames,
+            visitorsEmails: visitorEmails,
+            visitorsNumbers: visitorNumbers,
+            representativeEmail: representativeEmail,
+            departmentOfWork: department,
+            approvalStatus: "Pending"
+          });
+        }
     } catch (error) {
       console.error(error);
     } finally {
@@ -235,7 +233,7 @@ const Form = () => {
             label="Representative's Email Address"
             placeholder="Enter Email Address"
             className="pt-5 pb-5"
-            
+
             value={representativeEmail}
             onChange={(e) => setRepresentativeEmail(e.target.value)}
           />

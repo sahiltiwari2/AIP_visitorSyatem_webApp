@@ -30,7 +30,10 @@ const VisitorOverview = () => {
       const appointmentsRef = ref(db, 'approvedAppointments');
   
       const pendingQuery = query(
-        appointmentsRef
+        appointmentsRef,
+        orderByChild('approvalStatus'),
+        equalTo('Pending'),
+        limitToLast(3)
       );
   
       onValue(pendingQuery, (snapshot) => {

@@ -1,8 +1,9 @@
 'use client'
 import { useEffect, useState } from "react";
 import { getDatabase, ref, onValue, query, remove, set } from "firebase/database";
-import { Accordion, AccordionItem, Button } from "@nextui-org/react";
+import { Accordion, AccordionItem, Button, Select, SelectItem } from "@nextui-org/react";
 import TopBar from "@/components/topBar";
+import { departments } from "@/data";
 
 const Page = () => {
   type AppointmentEntry = {
@@ -23,33 +24,57 @@ const Page = () => {
   };
 
   const [pendingApprovals, setPendingApprovals] = useState<AppointmentEntry[]>([]);
-  const department = "hr";
+  const [department, setDepartment] = useState(departments[1]?.key || ''); // Default to first department key
 
   useEffect(() => {
     const fetchPendingApprovals = async () => {
       const db = getDatabase();
-      const appointmentsRef = ref(db, "appointmentsPending/" + department);
+      const appointmentsRef = ref(db, "appointmentsPending");
 
       const pendingQuery = query(appointmentsRef);
 
       onValue(pendingQuery, (snapshot) => {
         if (snapshot.exists()) {
-          const data = snapshot.val() as Record<string, AppointmentEntry>;
+          const data = snapshot.val() as Record<string, Record<string, AppointmentEntry>>;
 
-          const pendingList: AppointmentEntry[] = Object.entries(data).map(([id, entry]) => ({
-            id, // Assign the Firebase key as the `id`
-            ...entry,
-          }));
+          const allApprovals: AppointmentEntry[] = Object.entries(data).flatMap(([_, deptData]) => 
+            Object.entries(deptData).map(([id, entry]) => ({
+              id, // Assign the Firebase key as the `id`
+              ...(entry as AppointmentEntry), // Explicitly assert the type of `entry`
+            }))
+          );
 
-          setPendingApprovals(pendingList);
+          // Filter by selected department
+          const filteredApprovals = department
+            ? allApprovals.filter((entry) => entry.departmentOfWork === department)
+            : [];
+
+          setPendingApprovals(filteredApprovals);
         } else {
           setPendingApprovals([]);
         }
       });
     };
 
-    fetchPendingApprovals();
-  }, []);
+    if (department) {
+      fetchPendingApprovals();
+    }
+  }, [department]);
+
+  const handleReject = async (entryId: string) => {
+    const db = getDatabase();
+    try {
+      // Remove entry from appointmentsPending/<department>
+      const pendingRef = ref(db, `appointmentsPending/${department}/${entryId}`);
+      await remove(pendingRef);
+  
+      // Update the local state
+      setPendingApprovals((prev) => prev.filter((item) => item.id !== entryId));
+    } catch (error) {
+      console.error("Error rejecting appointment:", error);
+    }
+  };
+  
 
   const handleApprove = async (entryId: string, entry: AppointmentEntry) => {
     const db = getDatabase();
@@ -58,7 +83,7 @@ const Page = () => {
       const approvedRef = ref(db, "approvedAppointments/" + entryId);
       await set(approvedRef, entry);
 
-      // Remove entry from appointmentsPending/hr
+      // Remove entry from appointmentsPending/<department>
       const pendingRef = ref(db, `appointmentsPending/${department}/${entryId}`);
       await remove(pendingRef);
 
@@ -72,6 +97,19 @@ const Page = () => {
   return (
     <div>
       <TopBar pageName="Pending Approvals" />
+      <Select
+        label="Department"
+        placeholder="Select a Department"
+        className="w-[250px] pt-5 m-5"
+        value={department}
+        onChange={(e) => setDepartment(e.target.value)}
+      >
+        {departments.map((department) => (
+          <SelectItem key={department.key} value={department.key}>
+            {department.label}
+          </SelectItem>
+        ))}
+      </Select>
       <div className="mt-4 space-y-6 flex flex-col items-center w-screen ">
         {pendingApprovals.map((entry, index) => (
           <div key={entry.id || index} className="border-2 p-4 rounded shadow-sm">
@@ -152,7 +190,7 @@ const Page = () => {
                 >
                   Accept
                 </Button>
-                <Button variant="ghost" color="warning" className="w-36 h-11">
+                <Button variant="ghost" color="warning" className="w-36 h-11" onClick={() => handleReject(entry.id!)}>
                   Reject
                 </Button>
               </div>
