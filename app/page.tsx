@@ -3,6 +3,7 @@ import Image from "next/image";
 import TopBar from "@/components/topBar";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
+import IMage from "@/public/vercel.svg"
 
 export default function Home() {
   return (
@@ -17,8 +18,17 @@ export default function Home() {
         clients like TVS and Greaves, while beginning exports to Italy. The manufacturing facilities have been upgraded multiple times since
         1995 to meet international standards, and now nearly 50% of their output is exported to 35 countries.
       </div>
-      <div className="w-full h-[250px] border-2 flex items-center justify-center text-3xl font-extrabold">
-        Vid here 
+      <div className="w-full h-[250px] border-2 flex items-center justify-center text-3xl font-extrabold ">
+      <video
+          className="w-full h-full object-cover"
+          controls
+          autoPlay
+          loop
+          muted
+        >
+          <source src="/homeVid.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </div>
       <div className="pl-10 pt-3">
         The company has built a strong reputation, attracting consistent orders and inquiries from domestic and international clients.
@@ -31,6 +41,7 @@ export default function Home() {
         <Button style={{background: '#17C6ED'}} className="w-full text-white text-xl h-12 " as={Link} href="/form">
         Book an Appointment
         </Button>
+        
       </div>
     </div>
   );
