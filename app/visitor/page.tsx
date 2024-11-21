@@ -1,127 +1,3 @@
-// import React from 'react'
-// import TopBar from '@/components/topBar'
-// import { MdOutlinePeopleAlt } from "react-icons/md";
-// import { IoLocationOutline } from "react-icons/io5";
-// import { RiMailSettingsLine } from "react-icons/ri";
-// import { FaRegUser } from "react-icons/fa";
-// import Link from 'next/link';
-// import { getDatabase, ref, onValue } from "firebase/database";
-// import VisitorUpcomingCard from '@/components/visitorUpcomingCard';
-
-
-// const visitor = () => {
-//   const db = getDatabase();
-//   return (
-//     <div>
-//       <TopBar pageName='Visitor Overview' />
-//       <div className='w-screen grid grid-cols-2 gap-1 px-5 pt-1'>
-//         <Link href={'/'}>
-//           <div className='flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg' >
-//             <div className='text-2xl'>
-//               <MdOutlinePeopleAlt />
-//             </div>
-//             <div className='font-bold'>
-//               Today
-//             </div>
-//             <div className='text-[13px]'>
-//               Visitors Today
-//             </div>
-//           </div>
-//         </Link>
-//         <Link href={'/'}>
-//           <div className='flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg'>
-//             <div className='text-2xl'>
-//               <IoLocationOutline />
-//             </div>
-//             <div className='font-bold'>
-//               Upcoming Visits
-//             </div>
-//             <div className='text-[13px]'>
-//               Visitors Coming to Meet
-//             </div>
-//           </div>
-//         </Link>
-//       </div>
-//       <div className='w-screen px-5'>
-//         <Link href={'/'}>
-//           <div className='w-full mt-1   flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg'>
-//             <div className='text-2xl'>
-//               <RiMailSettingsLine />
-//             </div>
-//             <div className='font-bold'>
-//               Visit Requests
-//             </div>
-//             <div className='text-[13px]'>
-//               Pending Requests
-//             </div>
-//           </div>
-//         </Link>
-//       </div>
-//       <div className='grid grid-cols-2  w-screen '>
-//         <div className='m-5 pt-5 flex justify-center flex-col items-center'>
-//           <div className='font-bold text-2xl '>
-//             Visitor Activity Log
-//           </div>
-//           <VisitorUpcomingCard name = 'Sahil' time = '3:00 PM'/>
-//           <VisitorUpcomingCard name = 'Sahil' time = '3:00 PM'/>
-//           <VisitorUpcomingCard name = 'Sahil' time = '3:00 PM'/>
-//         </div>
-
-//         <div className='m-5 pt-5 flex justify-center flex-col items-center'>
-//           <div className='font-bold text-2xl '>
-//           Scheduled Appointments
-//           </div>
-//           <div className='flex mt-7 ml-5 '>
-//             <div className='text-4xl mt-1'>
-//               <FaRegUser />
-//             </div>
-//             <div className='ml-5'>
-//               <div className='font-semibold'>
-//                 Hemant
-//               </div>
-//               <div className='text-[13px]'>
-//                 Arival at 9:30 AM
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className='flex mt-7 ml-5 '>
-//             <div className='text-4xl mt-1'>
-//               <FaRegUser />
-//             </div>
-//             <div className='ml-5'>
-//               <div className='font-semibold'>
-//                 Pllavi
-//               </div>
-//               <div className='text-[13px]'>
-//                 Arival at 10:00 AM
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className='flex mt-7 ml-5 '>
-//             <div className='text-4xl mt-1'>
-//               <FaRegUser />
-//             </div>
-//             <div className='ml-5'>
-//               <div className='font-semibold'>
-//                 Samarp
-//               </div>
-//               <div className='text-[13px]'>
-//                 Arival at 11:00 AM
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//     </div>
-//   )
-// }
-
-// export default visitor
-
-
 'use client'
 import React, { useEffect, useState } from 'react';
 import TopBar from '@/components/topBar';
@@ -139,7 +15,6 @@ const VisitorOverview = () => {
   type AppointmentEntry = {
     name: string;
     timeOfVist: string;
-    approvalStatus: string;
   };
   
   type PendingApproval = {
@@ -152,13 +27,10 @@ const VisitorOverview = () => {
   useEffect(() => {
     const fetchPendingApprovals = async () => {
       const db = getDatabase();
-      const appointmentsRef = ref(db, 'appointmentsPending');
+      const appointmentsRef = ref(db, 'approvedAppointments');
   
       const pendingQuery = query(
-        appointmentsRef,
-        orderByChild('approvalStatus'),
-        equalTo('Pending'),
-        limitToLast(3)
+        appointmentsRef
       );
   
       onValue(pendingQuery, (snapshot) => {
@@ -204,7 +76,7 @@ const VisitorOverview = () => {
         </Link>
       </div>
       <div className="w-screen px-5">
-        <Link href={'/'}>
+        <Link href={'/pendingRequests'}>
           <div className="w-full mt-1 flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg">
             <div className="text-2xl">
               <RiMailSettingsLine />

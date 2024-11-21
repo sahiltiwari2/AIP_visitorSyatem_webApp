@@ -93,7 +93,7 @@ const Form = () => {
         });
 
         const db = getDatabase();
-        set(ref(db, 'appointmentsPending/' + email.split("@")[0]), {
+        set(ref(db, 'appointmentsPending/'+ department + '/' + email.split("@")[0]), {
           name: name,
           email: email,
           phonenumber: number,

@@ -19,16 +19,15 @@ export default function Home() {
         1995 to meet international standards, and now nearly 50% of their output is exported to 35 countries.
       </div>
       <div className="w-full h-[250px] border-2 flex items-center justify-center text-3xl font-extrabold ">
-      <video
-          className="w-full h-full object-cover"
-          controls
-          autoPlay
-          loop
-          muted
-        >
-          <source src="/homeVid.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        {/* https://drive.google.com/file/d/1tN1r5EBd2iyk_SzotSLPnbGibx0IBlF5/preview */}
+        <iframe
+          src="https://drive.google.com/file/d/1tN1r5EBd2iyk_SzotSLPnbGibx0IBlF5/preview"
+          width="640"
+          height="250"
+          allow="autoplay"
+          // muted
+        ></iframe>
+
       </div>
       <div className="pl-10 pt-3">
         The company has built a strong reputation, attracting consistent orders and inquiries from domestic and international clients.
@@ -38,10 +37,10 @@ export default function Home() {
         eco-friendly infrastructure spans 20,000 sq m, featuring ISO certifications and a dedicated R&D center.
       </div>
       <div className="w-screen px-10 pt-10">
-        <Button style={{background: '#17C6ED'}} className="w-full text-white text-xl h-12 " as={Link} href="/form">
-        Book an Appointment
+        <Button style={{ background: '#17C6ED' }} className="w-full text-white text-xl h-12 " as={Link} href="/form">
+          Book an Appointment
         </Button>
-        
+
       </div>
     </div>
   );
