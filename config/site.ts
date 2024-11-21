@@ -1,4 +1,10 @@
-export type SiteConfig = typeof siteConfig;
+import {
+  AiOutlineHome,
+  AiOutlineForm,
+  AiOutlineLogin,
+  AiOutlineDashboard,
+  AiOutlineUser,
+} from "react-icons/ai";
 
 export const siteConfig = {
   name: "Next.js + NextUI",
@@ -7,47 +13,27 @@ export const siteConfig = {
     {
       label: "Home",
       href: "/",
+      icon: AiOutlineHome, // Pass the component reference, not a JSX element
     },
     {
       label: "Form",
       href: "/form",
+      icon: AiOutlineForm,
     },
     {
       label: "Login",
       href: "/login",
+      icon: AiOutlineLogin,
     },
     {
       label: "Dashboard",
       href: "/dashboard",
+      icon: AiOutlineDashboard,
     },
     {
       label: "Visitor",
       href: "/visitor",
+      icon: AiOutlineUser,
     },
   ],
-  navMenuItems: [
-    {
-      label: "Home",
-      href: "/",
-    },
-    {
-      label: "Form",
-      href: "/form",
-    },
-    {
-      label: "Login",
-      href: "/login",
-    },
-    {
-      label: "Dashboard",
-      href: "/dashboard",
-    },
-    {
-      label: "Visitor",
-      href: "/Visitor",
-    },
-  ],
-  links: {
-   
-  },
 };
