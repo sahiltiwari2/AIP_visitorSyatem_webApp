@@ -24,51 +24,46 @@ const Page = () => {
   };
 
   const [pendingApprovals, setPendingApprovals] = useState<AppointmentEntry[]>([]);
-  const [department, setDepartment] = useState(departments[1]?.key || ''); // Default to first department key
+  const [department, setDepartment] = useState(departments[1]?.key || ''); 
 
   useEffect(() => {
     const fetchPendingApprovals = async () => {
       const db = getDatabase();
-      const appointmentsRef = ref(db, "appointmentsPending");
-
-      const pendingQuery = query(appointmentsRef);
-
-      onValue(pendingQuery, (snapshot) => {
+  
+      if (!department) {
+        setPendingApprovals([]); 
+        return;
+      }
+  
+      const departmentRef = ref(db, `appointmentsPending/${department}`);
+  
+      onValue(departmentRef, (snapshot) => {
         if (snapshot.exists()) {
-          const data = snapshot.val() as Record<string, Record<string, AppointmentEntry>>;
-
-          const allApprovals: AppointmentEntry[] = Object.entries(data).flatMap(([_, deptData]) => 
-            Object.entries(deptData).map(([id, entry]) => ({
-              id, // Assign the Firebase key as the `id`
-              ...(entry as AppointmentEntry), // Explicitly assert the type of `entry`
-            }))
+          const data = snapshot.val() as Record<string, AppointmentEntry>;
+  
+          const approvals: AppointmentEntry[] = Object.entries(data).map(
+            ([id, entry]) => ({
+              id,
+              ...(entry as AppointmentEntry), 
+            })
           );
-
-          // Filter by selected department
-          const filteredApprovals = department
-            ? allApprovals.filter((entry) => entry.departmentOfWork === department)
-            : [];
-
-          setPendingApprovals(filteredApprovals);
+  
+          setPendingApprovals(approvals);
         } else {
-          setPendingApprovals([]);
+          setPendingApprovals([]); 
         }
       });
     };
-
-    if (department) {
-      fetchPendingApprovals();
-    }
+  
+    fetchPendingApprovals();
   }, [department]);
-
+   
   const handleReject = async (entryId: string) => {
     const db = getDatabase();
     try {
-      // Remove entry from appointmentsPending/<department>
       const pendingRef = ref(db, `appointmentsPending/${department}/${entryId}`);
       await remove(pendingRef);
-  
-      // Update the local state
+
       setPendingApprovals((prev) => prev.filter((item) => item.id !== entryId));
     } catch (error) {
       console.error("Error rejecting appointment:", error);

@@ -92,22 +92,25 @@ const Form = () => {
           theme: 'dark',
         });
 
+        
+
         const db = getDatabase();
-          set(ref(db, 'appointmentsPending/' + '/' + email.split("@")[0]), {
-            name: name,
-            email: email,
-            phonenumber: number,
-            dateOfVisit: date,
-            purposeOfVisit: purpose,
-            numberOfVisitors: visitors,
-            timeOfVist: TimeofMeeting,
-            visitorsNames: visitorNames,
-            visitorsEmails: visitorEmails,
-            visitorsNumbers: visitorNumbers,
-            representativeEmail: representativeEmail,
-            departmentOfWork: department,
-            approvalStatus: "Pending"
-          });
+        set(ref(db, `appointmentsPending/${department}/${email.split("@")[0]}`), {
+          name,
+          email,
+          phonenumber: number,
+          dateOfVisit: date,
+          purposeOfVisit: purpose,
+          numberOfVisitors: visitors,
+          timeOfVist: TimeofMeeting,
+          visitorsNames: visitorNames,
+          visitorsEmails: visitorEmails,
+          visitorsNumbers: visitorNumbers,
+          representativeEmail,
+          departmentOfWork: department,
+          approvalStatus: "Pending"
+        });
+        
         }
     } catch (error) {
       console.error(error);
