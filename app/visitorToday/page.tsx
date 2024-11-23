@@ -24,6 +24,32 @@ type AppointmentEntry = {
 
 const Page = () => {
   const [appointments, setAppointments] = useState<AppointmentEntry[]>([]);
+  const [timeNow, setTimeNow] = useState<string>('');
+  const [currentDate, setCurrentDate] = useState<string>('');
+
+  useEffect(() => {
+    const updateCurrentTime = () => {
+      const now = new Date();
+      const formattedTime = now.toLocaleString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+      });
+      setTimeNow(formattedTime);
+
+      const formattedDate = now.toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+      setCurrentDate(formattedDate);
+    };
+
+    // Update the time immediately on load
+    updateCurrentTime();
+
+    // Optional: Update time every second
+    const interval = setInterval(updateCurrentTime, 1000);
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const db = getDatabase();
@@ -34,26 +60,35 @@ const Page = () => {
         const data = snapshot.val() as Record<string, AppointmentEntry>;
         const fetchedAppointments: AppointmentEntry[] = Object.entries(data).map(
           ([id, entry]) => ({
-            id, 
+            id,
             ...entry,
           })
         );
-        setAppointments(fetchedAppointments);
+
+        // Filter appointments to show only those for the current date
+        const filteredAppointments = fetchedAppointments.filter(
+          (appointment) => appointment.dateOfVisit === currentDate
+        );
+
+        setAppointments(filteredAppointments);
       } else {
         setAppointments([]);
       }
     });
-  }, []);
+  }, [currentDate]);
 
   const handleApprove = async (entryId: string, entry: AppointmentEntry) => {
     const db = getDatabase();
     try {
-      // Add entry to approvedAppointments
-      const approvedRef = ref(db, "CheckedIn/" + entryId);
-      await set(approvedRef, entry);
+      // Add entry to checkedIn with the current time
+      const approvedRef = ref(db, `checkedIn/${entryId}`);
+      await set(approvedRef, {
+        ...entry,
+        checkedInTime: timeNow, // Add the current time as checkedInTime
+      });
 
-      // Remove entry from appointmentsPending/<department>
-      const pendingRef = ref(db, `appointmentsPending/${entryId}`);
+      // Remove entry from approvedAppointments
+      const pendingRef = ref(db, `approvedAppointments/${entryId}`);
       await remove(pendingRef);
 
       // Update the local state
@@ -65,8 +100,11 @@ const Page = () => {
 
   return (
     <div>
-    <TopBar pageName="Today's Visitors"/>
-    <div className="mt-4 space-y-6 flex flex-col items-center w-screen ">
+      <TopBar pageName="Today's Visitors" />
+      {/* <div className="text-center font-bold text-lg my-2">
+        Current Time: {timeNow}
+      </div> */}
+      <div className="mt-4 space-y-6 flex flex-col items-center w-screen">
         {appointments.map((entry, index) => (
           <div key={entry.id || index} className="border-2 p-4 rounded shadow-sm">
             <div className="text-2xl font-semibold">Name: {entry.name}</div>
@@ -142,16 +180,16 @@ const Page = () => {
                   variant="ghost"
                   color="success"
                   className="w-36 h-11"
+                  onClick={() => handleApprove(entry.id!, entry)}
                 >
-                  Checked In 
+                  Checked In
                 </Button>
-
               </div>
             </div>
           </div>
         ))}
       </div>
-      </div>
+    </div>
   );
 };
 
