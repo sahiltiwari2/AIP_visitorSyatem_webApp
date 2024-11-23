@@ -94,11 +94,11 @@ const VisitorOverview = () => {
             <div className="text-2xl">
               <MdOutlinePeopleAlt />
             </div>
-            <div className="font-bold">Today</div>
+            <div className="font-bold md:text-red-800 lg:text-black">Today</div>
             <div className="text-[13px]">Visitors Today</div>
           </div>
         </Link>
-        <Link href={'/'}>
+        <Link href={'/upcomingVisitors'}>
           <div className="flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg">
             <div className="text-2xl">
               <IoLocationOutline />
