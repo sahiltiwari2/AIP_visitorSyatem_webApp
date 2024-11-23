@@ -59,7 +59,7 @@ const VisitorOverview = () => {
     <div>
       <TopBar pageName="Visitor Overview" />
       <div className="w-screen grid grid-cols-2 gap-1 px-5 pt-1">
-        <Link href={'/'}>
+        <Link href={'/visitorToday'}>
           <div className="flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg">
             <div className="text-2xl">
               <MdOutlinePeopleAlt />
