@@ -12,6 +12,7 @@ import { HiUserCircle } from "react-icons/hi2";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import Link from 'next/link'
 
 const page = () => {
   const dbRef = ref(getDatabase());
@@ -76,7 +77,7 @@ const page = () => {
         <span className='font-semibold'>Email:</span><span>{email}</span>
       </div>
       <div className='mt-10 w-screen p-3'>
-        <Button style={{ background: '#FFFFFF' }} className="w-full  text-xl h-11 hover:shadow-lg transition-all duration-700 delay-150" variant='bordered'>
+        <Button style={{ background: '#FFFFFF' }} className="w-full  text-xl h-11 hover:shadow-lg transition-all duration-700 delay-150" variant='bordered' as={Link} href='/adminSettings'>
           <div className='w-full flex items-center text-xl'>
             <div className='w-full flex items-center gap-3'>
               <IoMdSettings />
