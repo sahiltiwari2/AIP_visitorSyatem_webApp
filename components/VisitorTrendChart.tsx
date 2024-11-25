@@ -6,22 +6,22 @@ import {
   CategoryScale,
   LinearScale,
   LineElement,
-  PointElement,  // Register PointElement
+  PointElement, 
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
 
-// Register the required components for the chart, including PointElement
+
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
 
 const LineChart = () => {
   const data = {
-    labels: ['January', 'February', 'March', 'April', 'May'],
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
     datasets: [
       {
-        label: 'Sales',
-        data: [30, 20, 30, 40, 30],
+        label: 'Visitors',
+        data: [30, 20, 30, 25],
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)', // Area under the line is filled with this color
         fill: true, // Set to true to fill the area under the line
@@ -41,7 +41,7 @@ const LineChart = () => {
       },
       title: {
         display: true,
-        text: 'Monthly Sales',
+        text: 'Visitor Trends',
       },
     },
     scales: {
@@ -54,7 +54,7 @@ const LineChart = () => {
       y: {
         title: {
           display: true,
-          text: 'Sales',
+          text: 'Visitors',
         },
       },
     },

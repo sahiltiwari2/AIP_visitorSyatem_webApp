@@ -17,14 +17,14 @@ ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, T
 
 const LineChart = () => {
   const data = {
-    labels: ['January', 'February', 'March', 'April', 'May'],
+    labels: ['Production', 'Management', 'HR', 'Account', 'Shiping'],
     datasets: [
       {
-        label: 'Sales',
+        label: 'Visitors',
         data: [30, 20, 30, 40, 30],
         borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Area under the line is filled with this color
-        fill: true, // Set to true to fill the area under the line
+        backgroundColor: 'rgba(75, 192, 192, 0.2)', 
+        fill: true, 
         tension: 0, // Smooths the line
         pointRadius: 5, // Set the radius of the points
         pointBackgroundColor: 'rgba(75, 192, 192, 1)', // Point color
@@ -41,20 +41,20 @@ const LineChart = () => {
       },
       title: {
         display: true,
-        text: 'Monthly Sales',
+        text: 'Visitors Per Department',
       },
     },
     scales: {
       x: {
         title: {
           display: true,
-          text: 'Month',
+          text: 'Departments',
         },
       },
       y: {
         title: {
           display: true,
-          text: 'Sales',
+          text: 'Number of Visitors',
         },
       },
     },
