@@ -1,11 +1,19 @@
+'use client'
 import Logo from "@/public/AIPlogo.svg";
 import Image from "next/image";
 import TopBar from "@/components/topBar";
 import { Button } from "@nextui-org/button";
 import Link from "next/link";
 import IMage from "@/public/vercel.svg"
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://player.vimeo.com/api/player.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
   return (
     <div className="w-screen">
       <TopBar pageName="Home" />
@@ -18,17 +26,17 @@ export default function Home() {
         clients like TVS and Greaves, while beginning exports to Italy. The manufacturing facilities have been upgraded multiple times since
         1995 to meet international standards, and now nearly 50% of their output is exported to 35 countries.
       </div>
-      <div className="w-full h-[250px] border-2 flex items-center justify-center text-3xl font-extrabold ">
-        {/* https://drive.google.com/file/d/1tN1r5EBd2iyk_SzotSLPnbGibx0IBlF5/preview */}
-        <iframe
-          src="https://drive.google.com/file/d/1tN1r5EBd2iyk_SzotSLPnbGibx0IBlF5/preview"
-          width="640"
-          height="250"
-          allow="autoplay"
-          // muted
-        ></iframe>
+      <div className="w-full h-[250px] border-2 flex items-center justify-center text-3xl font-extrabold">
+  <iframe
+    src="https://player.vimeo.com/video/1033563803?h=f13e776813&title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=1&controls=0"
+    allow="autoplay;"
+    style={{ width: "100%", height: "250px" }}
+    title="homeVid"
+  ></iframe>
+</div>
 
-      </div>
+
+
       <div className="pl-10 pt-3">
         The company has built a strong reputation, attracting consistent orders and inquiries from domestic and international clients.
         Abilities offers competitive pricing and quality as an OEM supplier to China and Japan. They received financial support from DSIR

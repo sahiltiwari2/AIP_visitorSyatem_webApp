@@ -223,7 +223,7 @@ const Page = () => {
       </div>
       <div className="m-5 pt-5 ">
           <div className="font-bold text-2xl">Checked In</div>
-          <div className='flex flex-col justify-center  ml-10'>
+          <div className='flex flex-col justify-center   ml-10'>
             {checkedInEntries.map((entry, index) => (
               <VisitorCheckedCard key={index} name={entry.name} time={entry.checkedInTime} />
             ))}

@@ -16,3 +16,9 @@ export const departments = [
   { key: "hr", label: "HR" },
   { key: "development", label: "Development" }
 ];
+export const typeOfVisitors = [
+  { key: "Orders", label: "Orders" },
+  { key: "Interviews", label: "Interviews" },
+  { key: "Enquiry", label: "Enquiry" },
+  { key: "Meetings", label: "Meetings" },
+];

@@ -8,7 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ClipLoader } from 'react-spinners';
 import { getDatabase, ref, set } from "firebase/database";
-import { departments } from "@/data";
+import { departments, typeOfVisitors } from "@/data";
 
 const Form = () => {
   const numbers = [1, 2, 3, 4, 5];
@@ -22,11 +22,38 @@ const Form = () => {
   const [visitorNames, setVisitorNames] = useState<string[]>([]);
   const [representativeEmail, setRepresentativeEmail] = useState('');
   const [department, setDepartment] = useState('');
+  const [typeOfVisit, setTypeOfVisit] = useState('');
   const [TimeofMeeting, setTimeofMeeting] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [visitorEmails, setVisitorEmails] = useState<string[]>([]);
   const [visitorNumbers, setVisitorNumbers] = useState<string[]>([]);
   const [showCameraMessage, setShowCameraMessage] = useState(false); // State for showing the camera message
+
+
+  const handleTimeChange = (value: string) => {
+    const [hours, minutes] = value.split(":").map(Number);
+
+    // Adjust minutes to the nearest valid value (00 or 30)
+    let adjustedMinutes = minutes;
+    if (minutes < 15) {
+      adjustedMinutes = 0; // Round down to 00
+    } else if (minutes < 45) {
+      adjustedMinutes = 30; // Round up/down to 30
+    } else {
+      adjustedMinutes = 0; // Round up to 00 of the next hour
+    }
+
+    // Format the corrected time
+    const adjustedTime = `${String(hours).padStart(2, "0")}:${String(adjustedMinutes).padStart(2, "0")}`;
+
+    // Ensure the time is within working hours (optional)
+    if (adjustedTime < "09:00" || adjustedTime > "18:00") {
+      alert("Please select a time within working hours (9:00 AM to 6:00 PM).");
+      return;
+    }
+
+    setTimeofMeeting(adjustedTime);
+  };
 
   const handleVisitorEmailChange = (index: number, value: string) => {
     const updatedVisitorEmails = [...visitorEmails];
@@ -105,7 +132,8 @@ const Form = () => {
           visitorsNumbers: visitorNumbers,
           representativeEmail,
           departmentOfWork: department,
-          approvalStatus: "Pending"
+          approvalStatus: "Pending",
+          typeOfVisit: typeOfVisit
         });
       }
     } catch (error) {
@@ -169,6 +197,21 @@ const Form = () => {
             value={purpose}
             onChange={(e) => setPurpose(e.target.value)}
           />
+
+          <Select
+            label="Type of Visit"
+            placeholder="Select a Type"
+            className="w-full pt-5 "
+            value={typeOfVisit}
+            onChange={(e) => setTypeOfVisit(e.target.value)}
+          >
+            {typeOfVisitors.map((dept) => (
+              <SelectItem key={dept.key} value={dept.key}>
+                {dept.label}
+              </SelectItem>
+            ))}
+          </Select>
+
           <Select
             label="Number of Visitors"
             placeholder="Select a Number"
@@ -230,13 +273,16 @@ const Form = () => {
             name="appt"
             min="09:00"
             max="18:00"
+            step="1800" // Ensures 30-minute intervals in dropdowns
             label="Select time for the meeting"
             value={TimeofMeeting}
-            onChange={(e) => setTimeofMeeting(e.target.value)}
+            onChange={(e) => handleTimeChange(e.target.value)} // Custom handler
             required
             variant="bordered"
             description="Working hours from 9 AM to 6 PM"
           />
+
+
           <Select
             label="Department"
             placeholder="Select a Department"
@@ -251,12 +297,11 @@ const Form = () => {
             ))}
           </Select>
 
-          <Button
-            className="m-3"
-            onClick={() => setShowCameraMessage(true)}
-          >
-            Camera
-          </Button>
+            <Button
+              className="m-3"
+            >
+              Take photo
+            </Button>
 
           {showCameraMessage && (
             <div className="p-4 mt-4 bg-red-100 text-red-700 border border-red-500 rounded-md m-5">
