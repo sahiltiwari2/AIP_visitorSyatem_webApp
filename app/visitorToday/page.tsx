@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getDatabase, ref, onValue, set, remove } from 'firebase/database';
+import { getDatabase, ref, onValue, set, remove, query } from 'firebase/database';
 import { Accordion, AccordionItem, Button } from '@nextui-org/react';
 import TopBar from '@/components/topBar';
+import VisitorCheckedCard from '@/components/visitorCheckedin';
 
 type AppointmentEntry = {
   id?: string;
@@ -26,6 +27,12 @@ const Page = () => {
   const [appointments, setAppointments] = useState<AppointmentEntry[]>([]);
   const [timeNow, setTimeNow] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<string>('');
+  type CheckedInEntry = {
+    name: string;
+    checkedInTime: string; // Updated to use checkedInTime
+  };
+
+  const [checkedInEntries, setCheckedInEntries] = useState<CheckedInEntry[]>([]);
 
   useEffect(() => {
     const updateCurrentTime = () => {
@@ -48,6 +55,31 @@ const Page = () => {
     const interval = setInterval(updateCurrentTime, 1000);
 
     // Cleanup the interval on component unmount
+    
+
+    const fetchCheckedInEntries = async () => {
+      const db = getDatabase();
+      const checkedInRef = ref(db, 'checkedIn');
+
+      const checkedInQuery = query(checkedInRef);
+
+      onValue(checkedInQuery, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val() as Record<string, CheckedInEntry>;
+
+          const checkedInList: CheckedInEntry[] = Object.values(data).map((entry) => ({
+            name: entry.name,
+            checkedInTime: entry.checkedInTime, // Use checkedInTime here
+          }));
+
+          setCheckedInEntries(checkedInList);
+        } else {
+          console.log("No checked-in data found.");
+          setCheckedInEntries([]);
+        }
+      });
+    };
+    fetchCheckedInEntries();
     return () => clearInterval(interval);
   }, []);
 
@@ -189,6 +221,14 @@ const Page = () => {
           </div>
         ))}
       </div>
+      <div className="m-5 pt-5 ">
+          <div className="font-bold text-2xl">Checked In</div>
+          <div className='flex flex-col justify-center  ml-10'>
+            {checkedInEntries.map((entry, index) => (
+              <VisitorCheckedCard key={index} name={entry.name} time={entry.checkedInTime} />
+            ))}
+          </div>
+        </div>
     </div>
   );
 };
