@@ -6,28 +6,27 @@ import { Button, Select, SelectItem } from '@nextui-org/react';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { animals, departments } from "@/data";
 import { ClipLoader } from 'react-spinners';
-import { Navbar } from "@/components/navbar";
 import { getDatabase, ref, set } from "firebase/database";
+import { departments } from "@/data";
 
 const Form = () => {
   const numbers = [1, 2, 3, 4, 5];
 
-  const [name, setname] = useState('');
-  const [email, setemail] = useState('');
-  const [number, setnumber] = useState('');
-  const [date, setdate] = useState('');
-  const [purpose, setpurpose] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [number, setNumber] = useState('');
+  const [date, setDate] = useState('');
+  const [purpose, setPurpose] = useState('');
   const [visitors, setVisitors] = useState('');
-  const [visitorNames, setVisitorNames] = useState<string[]>([]); // Array to store visitor names
+  const [visitorNames, setVisitorNames] = useState<string[]>([]);
   const [representativeEmail, setRepresentativeEmail] = useState('');
   const [department, setDepartment] = useState('');
   const [TimeofMeeting, setTimeofMeeting] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [visitorEmails, setVisitorEmails] = useState<string[]>([]);
   const [visitorNumbers, setVisitorNumbers] = useState<string[]>([]);
-
+  const [showCameraMessage, setShowCameraMessage] = useState(false); // State for showing the camera message
 
   const handleVisitorEmailChange = (index: number, value: string) => {
     const updatedVisitorEmails = [...visitorEmails];
@@ -92,8 +91,6 @@ const Form = () => {
           theme: 'dark',
         });
 
-        
-
         const db = getDatabase();
         set(ref(db, `appointmentsPending/${department}/${email.split("@")[0]}`), {
           name,
@@ -110,8 +107,7 @@ const Form = () => {
           departmentOfWork: department,
           approvalStatus: "Pending"
         });
-        
-        }
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -136,7 +132,7 @@ const Form = () => {
             placeholder="Enter your Name"
             className="pt-5"
             value={name}
-            onChange={(e) => setname(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
           />
           <Input
             type="email"
@@ -145,7 +141,7 @@ const Form = () => {
             placeholder="Enter your email"
             className="pt-5"
             value={email}
-            onChange={(e) => setemail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <Input
             type="number"
@@ -154,7 +150,7 @@ const Form = () => {
             placeholder="Enter your Phone Number"
             className="pt-5"
             value={number}
-            onChange={(e) => setnumber(e.target.value)}
+            onChange={(e) => setNumber(e.target.value)}
           />
           <Input
             type="date"
@@ -162,7 +158,7 @@ const Form = () => {
             label="Date of visit"
             className="pt-5"
             value={date}
-            onChange={(e) => setdate(e.target.value)}
+            onChange={(e) => setDate(e.target.value)}
           />
           <Input
             type="text"
@@ -171,9 +167,8 @@ const Form = () => {
             placeholder="Enter your Purpose"
             className="pt-5"
             value={purpose}
-            onChange={(e) => setpurpose(e.target.value)}
+            onChange={(e) => setPurpose(e.target.value)}
           />
-
           <Select
             label="Number of Visitors"
             placeholder="Select a Number"
@@ -188,45 +183,35 @@ const Form = () => {
             ))}
           </Select>
 
-
           {visitorNames.map((visitorName, index) => (
-            <div className='grid grid-cols-3 gap-3'>
-              <div className=''>
-                <Input
-                  key={index}
-                  type="text"
-                  variant="bordered"
-                  label={`Visitor ${index + 1}'s Name`}
-                  placeholder={`Enter Visitor Name`}
-                  className="pt-5"
-                  value={visitorName}
-                  onChange={(e) => handleVisitorNameChange(index, e.target.value)}
-                />
-              </div>
-              <div className=''>
-                <Input
-                  key={index}
-                  type="text"
-                  variant="bordered"
-                  label={`Visitor ${index + 1}'s Email`}
-                  placeholder={`Enter Visitor Email`}
-                  className="pt-5"
-                  value={visitorEmails[index]}
-                  onChange={(e) => handleVisitorEmailChange(index, e.target.value)}
-                />
-              </div>
-              <div className=''>
-                <Input
-                  key={index}
-                  type="text"
-                  variant="bordered"
-                  label={`Visitor ${index + 1}'s Number`}
-                  placeholder={`Enter Visitor Phone Number`}
-                  className="pt-5"
-                  value={visitorNumbers[index]}
-                  onChange={(e) => handleVisitorNumberChange(index, e.target.value)}
-                />
-              </div>
+            <div className="grid grid-cols-3 gap-3" key={index}>
+              <Input
+                type="text"
+                variant="bordered"
+                label={`Visitor ${index + 1}'s Name`}
+                placeholder="Enter Visitor Name"
+                className="pt-5"
+                value={visitorName}
+                onChange={(e) => handleVisitorNameChange(index, e.target.value)}
+              />
+              <Input
+                type="text"
+                variant="bordered"
+                label={`Visitor ${index + 1}'s Email`}
+                placeholder="Enter Visitor Email"
+                className="pt-5"
+                value={visitorEmails[index]}
+                onChange={(e) => handleVisitorEmailChange(index, e.target.value)}
+              />
+              <Input
+                type="text"
+                variant="bordered"
+                label={`Visitor ${index + 1}'s Number`}
+                placeholder="Enter Visitor Phone Number"
+                className="pt-5"
+                value={visitorNumbers[index]}
+                onChange={(e) => handleVisitorNumberChange(index, e.target.value)}
+              />
             </div>
           ))}
 
@@ -236,13 +221,22 @@ const Form = () => {
             label="Representative's Email Address"
             placeholder="Enter Email Address"
             className="pt-5 pb-5"
-
             value={representativeEmail}
             onChange={(e) => setRepresentativeEmail(e.target.value)}
           />
-
-          <Input type="time" id="appt" name="appt" min="09:00" max="18:00" label='Select time for the meeting' value={TimeofMeeting} onChange={(e) => setTimeofMeeting(e.target.value)} required variant='bordered' description="Working hours from 9 AM to 6 PM" />
-
+          <Input
+            type="time"
+            id="appt"
+            name="appt"
+            min="09:00"
+            max="18:00"
+            label="Select time for the meeting"
+            value={TimeofMeeting}
+            onChange={(e) => setTimeofMeeting(e.target.value)}
+            required
+            variant="bordered"
+            description="Working hours from 9 AM to 6 PM"
+          />
           <Select
             label="Department"
             placeholder="Select a Department"
@@ -250,12 +244,25 @@ const Form = () => {
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
           >
-            {departments.map((department) => (
-              <SelectItem key={department.key} value={department.key}>
-                {department.label}
+            {departments.map((dept) => (
+              <SelectItem key={dept.key} value={dept.key}>
+                {dept.label}
               </SelectItem>
             ))}
           </Select>
+
+          <Button
+            className="m-3"
+            onClick={() => setShowCameraMessage(true)}
+          >
+            Camera
+          </Button>
+
+          {showCameraMessage && (
+            <div className="p-4 mt-4 bg-red-100 text-red-700 border border-red-500 rounded-md m-5">
+              Camera not found
+            </div>
+          )}
 
           <Button
             style={{ background: '#17C6ED' }}
@@ -270,7 +277,13 @@ const Form = () => {
             )}
           </Button>
           <div className="pt-5">
-            <Button color="danger" variant="flat" className="w-full text-xl h-12" as={Link} href="/">
+            <Button
+              color="danger"
+              variant="flat"
+              className="w-full text-xl h-12"
+              as={Link}
+              href="/"
+            >
               Cancel
             </Button>
           </div>
