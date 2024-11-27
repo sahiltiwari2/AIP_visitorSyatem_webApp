@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getDatabase, ref, onValue, set, remove, query } from 'firebase/database';
+import { getDatabase, ref, onValue, set, remove, query, get } from 'firebase/database';
 import { Accordion, AccordionItem, Button } from '@nextui-org/react';
 import TopBar from '@/components/topBar';
 import VisitorCheckedCard from '@/components/visitorCheckedin';
@@ -155,6 +155,12 @@ const Page = () => {
       // Remove entry from approvedAppointments
       const pendingRef = ref(db, `approvedAppointments/${entryId}`);
       await remove(pendingRef);
+
+      // Increment today's visitor count
+      const todayVisitorsRef = ref(db, `todayVisitors/${currentDate}`);
+      const snapshot = await get(todayVisitorsRef);
+      const currentCount = snapshot.exists() ? snapshot.val() : 0;
+      await set(todayVisitorsRef, currentCount + 1);
 
       // Update the local state
       setAppointments((prev) => prev.filter((item) => item.id !== entryId));
