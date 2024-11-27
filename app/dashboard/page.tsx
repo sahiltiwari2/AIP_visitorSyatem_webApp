@@ -6,7 +6,7 @@ import VisitorTrendChart from '@/components/VisitorTrendChart';
 import TopBar from '@/components/topBar';
 import VisitorsPerDepartment from '@/components/VisitorPerDepartmentChart';
 import VisitorTypesChart from '@/components/TypesOfVisitors';
-import { equalTo, getDatabase, limitToLast, onValue, orderByChild, query, ref } from 'firebase/database';
+import { equalTo, get, getDatabase, limitToLast, onValue, orderByChild, query, ref } from 'firebase/database';
 import VisitorCheckedCard from '@/components/visitorCheckedin' // Ensure these are defined or imported
 import VisitorUpcomingCard from '@/components/visitorUpcomingCard';
 
@@ -28,8 +28,26 @@ const DashboardPage = () => {
 
   const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>([]);
   const [checkedInEntries, setCheckedInEntries] = useState<CheckedInEntry[]>([]);
+  const [todaysVisitor, setTodaysVisitor] = useState<number>(0);
 
   useEffect(() => {
+
+    const fetchTodayVisitorCount = async () => {
+      const db = getDatabase();
+      const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+      const todayVisitorsRef = ref(db, `todayVisitors/${today}`);
+    
+      try {
+        const snapshot = await get(todayVisitorsRef);
+        if (snapshot.exists()) {
+          setTodaysVisitor(snapshot.val());
+        } else {
+          setTodaysVisitor(0); // No data for today, set to 0
+        }
+      } catch (error) {
+        console.error("Error fetching today's visitor count:", error);
+      }
+    }
     // Fetch pending approvals
     const fetchPendingApprovals = () => {
       const db = getDatabase();
@@ -83,6 +101,7 @@ const DashboardPage = () => {
 
     fetchPendingApprovals();
     fetchCheckedInEntries();
+    fetchTodayVisitorCount();
   }, []);
 
   return (
@@ -95,7 +114,7 @@ const DashboardPage = () => {
               Visitors Today
             </div>
             <div>
-              55
+            {todaysVisitor}
             </div>
           </div>
         </div>
