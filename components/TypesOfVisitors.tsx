@@ -14,7 +14,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 const DoughnutChart = () => {
   const data = {
-    labels: ['Others', 'Interview', 'Enquiry', 'Meetings'],
+    labels: ['Orders', 'Interview', 'Enquiry', 'Meetings'],
     datasets: [
       {
         label: 'Types of Visitors',

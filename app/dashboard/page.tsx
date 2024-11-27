@@ -36,7 +36,7 @@ const DashboardPage = () => {
       const db = getDatabase();
       const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
       const todayVisitorsRef = ref(db, `todayVisitors/${today}`);
-    
+
       try {
         const snapshot = await get(todayVisitorsRef);
         if (snapshot.exists()) {
@@ -114,7 +114,7 @@ const DashboardPage = () => {
               Visitors Today
             </div>
             <div>
-            {todaysVisitor}
+              {todaysVisitor}
             </div>
           </div>
         </div>
@@ -130,20 +130,40 @@ const DashboardPage = () => {
         </div>
       </div>
       <div className='w-screen flex items-center justify-center flex-col'>
-        <div className='w-[1100px] border-2 shadow-md p-3 rounded-md m-3'>
-          <VisitorTrendChart />
+        <div className='w-[1100px] border-2 shadow-md  rounded-md  relative flex flex-row justify-center items-centers'>
+          <div className=' absolute bg-teal-300 h-14 w-full flex items-center justify-center font-bold text-2xl text-gray-50 shadow-sm'>
+            Visitor Trend
+          </div>
+          <div className='pl-3 pt-7'>
+            <VisitorTrendChart />
+          </div>
         </div>
-        <div className='w-[1100px] border-2 shadow-md p-3 rounded-md m-3'>
-          <VisitorTypesChart />
+        <div className='w-[1100px] border-2 shadow-md p-3 rounded-md  relative flex flex-row justify-center items-centers'>
+          <div className=' absolute bg-orange-300 h-14 w-full flex items-center justify-center font-bold text-2xl text-gray-50 shadow-sm'>
+            Type Of Visitors
+          </div>
+          <div className='pl-3 pt-7'>
+            <VisitorTypesChart />
+          </div>
         </div>
-        <div className='w-[1100px] border-2 shadow-md p-3 rounded-md m-3'>
-          <PreRegisterVisitorChar />
+        <div className='w-[1100px] border-2 shadow-md p-3 rounded-md  relative flex flex-row justify-center items-centers'>
+          <div className=' absolute bg-pink-300 h-14 w-full flex items-center justify-center font-bold text-2xl text-gray-50 shadow-sm'>
+            Pre Registered Visitors
+          </div>
+          <div className='pl-3 pt-7'>
+            <PreRegisterVisitorChar />
+          </div>
         </div>
-        <div className='w-[1100px] border-2 shadow-md p-3 rounded-md m-3'>
-          <VisitorsPerDepartment />
+        <div className='w-[1100px] border-2 shadow-md  rounded-md m-3 relative flex flex-row justify-center items-centers'>
+          <div className=' absolute bg-blue-300 h-14 w-full flex items-center justify-center font-bold text-2xl text-gray-50 shadow-sm'>
+            Visitors Per Department
+          </div>
+          <div className='pl-3 pt-7'>
+            <VisitorsPerDepartment />
+          </div>
         </div>
       </div>
-      
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 px-5 mt-10 mb-10 w-screen">
         <div className="text-center ">
