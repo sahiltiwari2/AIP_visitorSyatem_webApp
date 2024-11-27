@@ -124,7 +124,7 @@ const DashboardPage = () => {
               Total This Week
             </div>
             <div>
-              176
+              {todaysVisitor}
             </div>
           </div>
         </div>

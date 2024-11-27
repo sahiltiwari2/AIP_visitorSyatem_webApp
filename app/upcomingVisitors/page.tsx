@@ -36,10 +36,41 @@ const Page = () => {
     updateCurrentDate();
   }, []);
 
+  // useEffect(() => {
+  //   const db = getDatabase();
+  //   const appointmentsRef = ref(db, 'approvedAppointments');
+
+  //   onValue(appointmentsRef, (snapshot) => {
+  //     if (snapshot.exists()) {
+  //       const data = snapshot.val() as Record<string, AppointmentEntry>;
+  //       const fetchedAppointments: AppointmentEntry[] = Object.entries(data).map(
+  //         ([id, entry]) => ({
+  //           id,
+  //           ...entry,
+  //         })
+  //       );
+
+  //       // Filter appointments to show only those in the future
+  //       const filteredAppointments = fetchedAppointments.filter(
+  //         (appointment) => appointment.dateOfVisit > currentDate
+  //       );
+
+  //       // Sort appointments by date in ascending order (earliest date first)
+  //       const sortedAppointments = filteredAppointments.sort((a, b) =>
+  //         a.dateOfVisit.localeCompare(b.dateOfVisit)
+  //       );
+
+  //       setAppointments(sortedAppointments);
+  //     } else {
+  //       setAppointments([]);
+  //     }
+  //   });
+  // }, [currentDate]);
+
   useEffect(() => {
     const db = getDatabase();
     const appointmentsRef = ref(db, 'approvedAppointments');
-
+  
     onValue(appointmentsRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val() as Record<string, AppointmentEntry>;
@@ -49,23 +80,29 @@ const Page = () => {
             ...entry,
           })
         );
-
-        // Filter appointments to show only those in the future
+  
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date();
+        const currentDate = today.toISOString().split('T')[0];
+  
+        // Filter appointments to show only those with a future date
         const filteredAppointments = fetchedAppointments.filter(
           (appointment) => appointment.dateOfVisit > currentDate
         );
-
-        // Sort appointments by date in ascending order (earliest date first)
+  
+        // Optionally sort appointments by date (earliest first)
         const sortedAppointments = filteredAppointments.sort((a, b) =>
           a.dateOfVisit.localeCompare(b.dateOfVisit)
         );
-
+  
         setAppointments(sortedAppointments);
       } else {
         setAppointments([]);
       }
     });
-  }, [currentDate]);
+  }, []);
+  
+  
 
   const handleApprove = async (entryId: string, entry: AppointmentEntry) => {
     const db = getDatabase();
