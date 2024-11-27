@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 const TopBar = ({ pageName }: { pageName: string }) => {
   return (
-    <div className=' px-10 py-5 flex flex-row border-2 w-screen border-black shadow-md rounded-md'>
+    <div className=' px-10 py-5 flex flex-row  w-screen bg-gray-100 shadow-md rounded-md'>
       <div className=''>
         <Image src={Logo} alt='Logo' />
       </div>

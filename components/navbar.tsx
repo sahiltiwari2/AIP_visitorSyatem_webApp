@@ -22,7 +22,9 @@ export const Navbar = () => {
   }, []);
 
   return (
-    <div className="w-full border-2 border-black rounded-md fixed bottom-0 left-0 z-50">
+    <div>
+    <div className="w-full bg-gray-100 rounded-md shadow-top fixed bottom-0 left-0 z-50">
+      <div className="w-full shadow-md h-1"></div>
       <NextUINavbar maxWidth="full">
         <NavbarContent className="w-full">
           <div className="flex justify-center items-center gap-24 w-full">
@@ -67,17 +69,6 @@ export const Navbar = () => {
         </NavbarContent>
       </NextUINavbar>
     </div>
+    </div>
   );
 };
-
-
-
-
-
-
-
-
-
-
-
-

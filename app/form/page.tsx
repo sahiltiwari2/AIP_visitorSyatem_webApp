@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ClipLoader } from 'react-spinners';
 import { getDatabase, ref, set } from "firebase/database";
 import { departments, typeOfVisitors } from "@/data";
+import { FaCamera } from "react-icons/fa";
 
 const Form = () => {
   const numbers = [1, 2, 3, 4, 5];
@@ -47,10 +48,10 @@ const Form = () => {
     const adjustedTime = `${String(hours).padStart(2, "0")}:${String(adjustedMinutes).padStart(2, "0")}`;
 
     // Ensure the time is within working hours (optional)
-    if (adjustedTime < "09:00" || adjustedTime > "18:00") {
-      alert("Please select a time within working hours (9:00 AM to 6:00 PM).");
-      return;
-    }
+    // if (adjustedTime < "09:00" || adjustedTime > "18:00") {
+    //   alert("Please select a time within working hours (9:00 AM to 6:00 PM).");
+    //   return;
+    // }
 
     setTimeofMeeting(adjustedTime);
   };
@@ -211,11 +212,11 @@ const Form = () => {
               </SelectItem>
             ))}
           </Select>
-
+          <div className='pt-5 text-[12px] text-gray-400 pl-2'>Enter Team Details- if any</div>
           <Select
-            label="Number of Visitors"
+            label="Members in Group"
             placeholder="Select a Number"
-            className="w-full pt-5"
+            className="w-full "
             value={visitors}
             onChange={(e) => handleVisitorsChange(e.target.value)}
           >
@@ -231,8 +232,8 @@ const Form = () => {
               <Input
                 type="text"
                 variant="bordered"
-                label={`Visitor ${index + 1}'s Name`}
-                placeholder="Enter Visitor Name"
+                label={`Member ${index + 1} Name`}
+                placeholder="Enter Member Name"
                 className="pt-5"
                 value={visitorName}
                 onChange={(e) => handleVisitorNameChange(index, e.target.value)}
@@ -240,8 +241,8 @@ const Form = () => {
               <Input
                 type="text"
                 variant="bordered"
-                label={`Visitor ${index + 1}'s Email`}
-                placeholder="Enter Visitor Email"
+                label={`Member ${index + 1} Email`}
+                placeholder="Enter Member Email"
                 className="pt-5"
                 value={visitorEmails[index]}
                 onChange={(e) => handleVisitorEmailChange(index, e.target.value)}
@@ -249,8 +250,8 @@ const Form = () => {
               <Input
                 type="text"
                 variant="bordered"
-                label={`Visitor ${index + 1}'s Number`}
-                placeholder="Enter Visitor Phone Number"
+                label={`Member ${index + 1} Number`}
+                placeholder="Enter Member Phone Number"
                 className="pt-5"
                 value={visitorNumbers[index]}
                 onChange={(e) => handleVisitorNumberChange(index, e.target.value)}
@@ -279,7 +280,7 @@ const Form = () => {
             onChange={(e) => handleTimeChange(e.target.value)} // Custom handler
             required
             variant="bordered"
-            description="Working hours from 9 AM to 6 PM"
+            // description="Working hours from 9 AM to 6 PM"
           />
 
 
@@ -298,8 +299,11 @@ const Form = () => {
           </Select>
 
             <Button
-              className="m-3"
+              className=" w-full text-xl mb-5 h-12"
+              variant='ghost'
+              color='secondary'
             >
+              <FaCamera />
               Take photo
             </Button>
 
