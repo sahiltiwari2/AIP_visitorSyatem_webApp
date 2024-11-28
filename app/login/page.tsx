@@ -24,7 +24,7 @@ const login = () => {
     const res = await SignInWithEmailAndPassword(email,password)
     setemail('');
     setpassword('');
-    router.push('/')
+    router.push('/profile')
   }
   const handleGoogleSignIn = async () => {
     try {
@@ -39,7 +39,7 @@ const login = () => {
 
         toast.success('Logged in with Google!', { position: "top-left", theme: "dark" });
         setTimeout(() => {
-            router.push('/');
+            router.push('/adminSettings');
         }, 2000);
     } catch (error) {
         // toast.error(error.message, { position: "top-left", theme: "dark" });

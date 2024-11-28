@@ -43,7 +43,7 @@ const signup = () => {
                     theme: "dark",
                 });
                 setTimeout(() => {
-                    router.push('/');
+                    router.push('/profile');
                 }, 3000);
             } catch (error) {
                 // toast.error(error.message, { position: "top-left", theme: "dark" });
@@ -66,7 +66,7 @@ const signup = () => {
 
             toast.success('Logged in with Google!', { position: "top-left", theme: "dark" });
             setTimeout(() => {
-                router.push('/');
+                router.push('/adminSettings');
             }, 2000);
         } catch (error) {
             // toast.error(error.message, { position: "top-left", theme: "dark" });
