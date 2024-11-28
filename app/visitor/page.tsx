@@ -120,7 +120,7 @@ const VisitorOverview = () => {
         </Link>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-2 w-screen">
-        <div className="m-5 pt-5 text-center">
+        <div className="m-5 pt-5 text-center border-2 py-5 rounded-lg shadow-md h-full">
           <div className="font-bold text-2xl">Checked In</div>
           <div className='flex flex-col justify-center items-center'>
             {checkedInEntries.map((entry, index) => (
@@ -128,7 +128,7 @@ const VisitorOverview = () => {
             ))}
           </div>
         </div>
-        <div className=" m-5 pt-5 text-center">
+        <div className=" m-5 pt-5 text-center border-2 py-5 rounded-lg shadow-md h-full">
           <div className="font-bold text-2xl">Scheduled Appointments</div>
           <div className='flex flex-col justify-center items-center'>
             {pendingApprovals.map((approval, index) => (

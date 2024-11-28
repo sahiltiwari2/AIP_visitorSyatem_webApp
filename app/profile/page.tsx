@@ -61,6 +61,7 @@ const page = () => {
       <div className='font-bold text-xl m-5'>
         Profile Information
       </div>
+
       <div className='flex justify-center mt-10  text-[150px] w-screen'><HiUserCircle /></div>
       <div className='flex justify-center mt-5 gap-3 text-2xl w-screen'>
         <span className='font-semibold'>Current User:</span><span>{username}</span>

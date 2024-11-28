@@ -166,8 +166,8 @@ const DashboardPage = () => {
 
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 px-5 mt-10 mb-10 w-screen">
-        <div className="text-center ">
-          <div className="font-bold text-2xl mb-3">Checked In</div>
+        <div className="text-center border-2 py-5 rounded-lg shadow-md">
+          <div className="font-bold text-2xl">Checked In</div>
           <div className="flex flex-col items-center">
             {checkedInEntries.length > 0 ? (
               checkedInEntries.map((entry, index) => (
@@ -178,8 +178,8 @@ const DashboardPage = () => {
             )}
           </div>
         </div>
-        <div className="text-center">
-          <div className="font-bold text-2xl mb-3">Scheduled Appointments</div>
+        <div className="text-center border-2 py-5 rounded-lg shadow-md">
+          <div className="font-bold text-2xl">Scheduled Appointments</div>
           <div className="flex flex-col items-center">
             {pendingApprovals.length > 0 ? (
               pendingApprovals.map((approval, index) => (
