@@ -61,11 +61,6 @@ const page = () => {
       <div className='font-bold text-xl m-5'>
         Profile Information
       </div>
-      <div className='pl-5  w-screen'>
-        Oliver Smith is the main administrator of the system. He has been with the company for over 10 years and has extensive experience in
-        managing IT infrastructure and software development projects. Oliver is known for his attention to detail and his ability to solve
-        complex problems efficiently. In his free time, he enjoys hiking and photography.
-      </div>
       <div className='flex justify-center mt-10  text-[150px] w-screen'><HiUserCircle /></div>
       <div className='flex justify-center mt-5 gap-3 text-2xl w-screen'>
         <span className='font-semibold'>Current User:</span><span>{username}</span>
@@ -76,7 +71,7 @@ const page = () => {
       <div className='flex justify-center mt-4 gap-3 text-2xl w-screen'>
         <span className='font-semibold'>Email:</span><span>{email}</span>
       </div>
-      <div className='mt-10 w-screen p-3'>
+      <div className='mt-24 w-screen p-3 '>
         <Button style={{ background: '#FFFFFF' }} className="w-full  text-xl h-11 hover:shadow-lg transition-all duration-700 delay-150" variant='bordered' as={Link} href='/adminSettings'>
           <div className='w-full flex items-center text-xl'>
             <div className='w-full flex items-center gap-3'>
