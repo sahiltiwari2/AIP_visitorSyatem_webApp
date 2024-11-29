@@ -9,7 +9,8 @@ import VisitorTypesChart from '@/components/TypesOfVisitors';
 import { equalTo, get, getDatabase, limitToLast, onValue, orderByChild, query, ref } from 'firebase/database';
 import VisitorCheckedCard from '@/components/visitorCheckedin' // Ensure these are defined or imported
 import VisitorUpcomingCard from '@/components/visitorUpcomingCard';
-
+import { Select, SelectItem } from '@nextui-org/react';
+import { TimeFrames } from "@/data"
 const DashboardPage = () => {
   type AppointmentEntry = {
     name: string;
@@ -29,6 +30,18 @@ const DashboardPage = () => {
   const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>([]);
   const [checkedInEntries, setCheckedInEntries] = useState<CheckedInEntry[]>([]);
   const [todaysVisitor, setTodaysVisitor] = useState<number>(0);
+
+
+  type TimeFrame = 'Week' | 'Month' | 'Year';  // Valid time frames
+  const [TimeFrame, setTimeFrame] = useState<TimeFrame>("Week");  // Set default to '' (or 'Week' if preferred)
+
+  // Handle the select change
+  const handleTimeFrameChange = (value: string) => {
+    if (value === 'Week' || value === 'Month' || value === 'Year') {
+      setTimeFrame(value as TimeFrame);
+    }
+  }
+
 
   useEffect(() => {
 
@@ -107,6 +120,7 @@ const DashboardPage = () => {
   return (
     <div>
       <TopBar pageName='Dashboard' />
+
       <div className='grid grid-cols-2 w-screen '>
         <div className='w-full px-5 py-5'>
           <div className='flex flex-col justify-center border-2 py-3 px-10 rounded-md shadow-md'>
@@ -117,6 +131,7 @@ const DashboardPage = () => {
               {todaysVisitor}
             </div>
           </div>
+        
         </div>
         <div className='w-full px-5 py-5'>
           <div className='flex flex-col justify-center border-2 py-3 px-10 rounded-md shadow-md'>
@@ -130,14 +145,32 @@ const DashboardPage = () => {
         </div>
       </div>
       <div className='w-screen flex items-center justify-center flex-col'>
+        <div className=' w-[1100px] mb-1'>
+          <Select
+            label="Time Period"
+            placeholder="Select a time frame"
+            className="w-48 pt-5"
+            value={TimeFrame}
+            variant="bordered"
+            onChange={(e) => handleTimeFrameChange(e.target.value)}
+          >
+            {TimeFrames.map((dept) => (
+              <SelectItem key={dept.key} value={dept.key}>
+                {dept.label}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
         <div className='w-[1100px] border-2 shadow-md  rounded-md  relative flex flex-row justify-center items-centers'>
+
           <div className=' absolute bg-teal-300 h-14 w-full flex items-center justify-center font-bold text-2xl text-gray-50 shadow-sm'>
             Visitor Trend
           </div>
           <div className='pl-3 pt-7'>
-            <VisitorTrendChart />
+            <VisitorTrendChart timeFrame={TimeFrame} />
           </div>
         </div>
+
         <div className='w-[1100px] border-2 shadow-md p-3 rounded-md  relative flex flex-row justify-center items-centers'>
           <div className=' absolute bg-orange-300 h-14 w-full flex items-center justify-center font-bold text-2xl text-gray-50 shadow-sm'>
             Type Of Visitors

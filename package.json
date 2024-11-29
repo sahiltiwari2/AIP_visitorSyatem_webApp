@@ -29,6 +29,7 @@
 		"chakra": "^0.0.3",
 		"chart.js": "^4.4.6",
 		"clsx": "^2.1.1",
+		"date-fns": "^4.1.0",
 		"firebase": "^11.0.2",
 		"framer-motion": "~11.1.1",
 		"intl-messageformat": "^10.5.0",
@@ -47,7 +48,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "20.5.7",
-		"@types/react": "18.3.3",
+		"@types/react": "^18.3.3",
 		"@types/react-dom": "18.3.0",
 		"@typescript-eslint/eslint-plugin": "8.11.0",
 		"@typescript-eslint/parser": "8.11.0",

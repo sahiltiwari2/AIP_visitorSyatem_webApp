@@ -22,3 +22,8 @@ export const typeOfVisitors = [
   { key: "Enquiry", label: "Enquiry" },
   { key: "Meetings", label: "Meetings" },
 ];
+export const TimeFrames = [
+  { key: 'Week', label: '7 Days' },
+  { key: 'Year', label: '15 Days' },
+  { key: 'Month', label: '30 Days' },
+];

@@ -120,6 +120,19 @@ const Page = () => {
     const db = getDatabase();
     const appointmentsRef = ref(db, 'approvedAppointments');
 
+    const initializeDailyVisitors = async () => {
+      const db = getDatabase();
+      const todayVisitorsRef = ref(db, `todayVisitors/${currentDate}`);
+  
+      // Check if there is an entry for today
+      const snapshot = await get(todayVisitorsRef);
+      if (!snapshot.exists()) {
+        // If no entry, initialize with 0
+        await set(todayVisitorsRef, 0);
+      }
+    };
+    initializeDailyVisitors();
+
     onValue(appointmentsRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val() as Record<string, AppointmentEntry>;
@@ -151,23 +164,35 @@ const Page = () => {
         ...entry,
         checkedInTime: timeNow, // Add the current time as checkedInTime
       });
-
+  
       // Remove entry from approvedAppointments
       const pendingRef = ref(db, `approvedAppointments/${entryId}`);
       await remove(pendingRef);
-
+  
+      // Determine the week number
+      const dayOfMonth = new Date().getDate();
+      const weekNumber = Math.ceil(dayOfMonth / 7); // Calculate week number (1-4)
+  
       // Increment today's visitor count
       const todayVisitorsRef = ref(db, `todayVisitors/${currentDate}`);
       const snapshot = await get(todayVisitorsRef);
       const currentCount = snapshot.exists() ? snapshot.val() : 0;
       await set(todayVisitorsRef, currentCount + 1);
-
+  
+      // Increment the week's visitor count
+      const weekVisitorsRef = ref(db, `weeklyVisitors/${currentDate.slice(0, 7)}/week${weekNumber}`);
+      const weekSnapshot = await get(weekVisitorsRef);
+      const currentWeekCount = weekSnapshot.exists() ? weekSnapshot.val() : 0;
+      await set(weekVisitorsRef, currentWeekCount + 1);
+  
       // Update the local state
       setAppointments((prev) => prev.filter((item) => item.id !== entryId));
     } catch (error) {
       console.error("Error approving appointment:", error);
     }
   };
+  
+  
 
   return (
     <div>
