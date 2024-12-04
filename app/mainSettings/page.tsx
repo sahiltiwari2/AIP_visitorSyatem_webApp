@@ -12,6 +12,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { departments } from "@/data";
+import Email from "@/public/email.json";
 
 const Page = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -23,23 +24,15 @@ const Page = () => {
   const [isEditingDepartmentEmail, setIsEditingDepartmentEmail] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [admin, setAdmin] = useState(false);
+
+
+
 
   useEffect(() => {
     const dbRef = ref(database);
 
-    // Fetch the master email
-    const fetchMasterEmail = async () => {
-      try {
-        const snapshot = await get(child(dbRef, 'currenMasterEmail'));
-        if (snapshot.exists()) {
-          setCurrentMasterEmail(snapshot.val());
-        } else {
-          console.log("No master email data available.");
-        }
-      } catch (error) {
-        console.error("Error fetching master email:", error);
-      }
-    };
+
 
     // Fetch user details
     const fetchUserDetails = async (userEmail: string) => {
@@ -79,8 +72,6 @@ const Page = () => {
         fetchUserDetails(user.email);
       }
     });
-
-    fetchMasterEmail();
 
     // Update HR email when department changes
     if (selectedDepartment) fetchDepartmentEmail(selectedDepartment);
@@ -128,6 +119,14 @@ const Page = () => {
       toast.error('Failed to change department email.');
     }
   };
+  useEffect(() => {
+    if (Email.admins.includes(email)) {
+      setAdmin(true);
+    } else {
+      setAdmin(false);
+    }
+
+  }, [email])
 
   return (
     <div className='mb-10'>
@@ -139,13 +138,13 @@ const Page = () => {
             <FaPencilAlt />
             <span className='text-xl'>Admin:</span>
             <span className='text-xl'>{username || "Loading..."}</span>
-          </div> 
+          </div>
           <Button className='ml-auto w-32' variant='ghost' as={Link} href='/adminSettings'>Manage</Button>
         </div>
       </div>
 
       <div className='font-bold text-2xl m-5 mt-10'>Notifications</div>
-      <div className='w-screen flex justify-between items-center px-5'>
+      <div className={admin ? 'w-screen flex justify-between items-center px-5' : "hidden"}>
         <div className='w-full border-2 flex items-center rounded-lg p-5 shadow-sm'>
           <div className='flex flex-col gap-2 text-xl p-2 px-5 rounded-md'>
             <div className='flex items-center gap-2'>
@@ -171,7 +170,7 @@ const Page = () => {
         </div>
       </div>
 
-      <div className='w-screen flex justify-between items-center px-5 mt-5'>
+      <div className={admin ? 'w-screen flex justify-between items-center px-5 mt-5' : "hidden"}>
         <div className='w-full border-2 flex items-center rounded-lg p-5 shadow-sm'>
           <div className='flex flex-col gap-2 text-xl p-2 px-5 rounded-md w-3/4'>
             <div className='flex items-center gap-2'>
@@ -216,6 +215,9 @@ const Page = () => {
             </Button>
           )}
         </div>
+      </div>
+      <div className={!admin ? 'w-screen  pl-10 font-bold text-xl' : "hidden"}>
+          You are not an admin
       </div>
 
       <div className='font-bold text-2xl m-5 mt-10'>Security Settings</div>

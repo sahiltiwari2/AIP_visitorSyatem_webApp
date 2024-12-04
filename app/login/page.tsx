@@ -25,6 +25,16 @@ const login = () => {
   const handelSingIn = async () => {
     if (Emails.accounts.includes(email)) {
       const res = await SignInWithEmailAndPassword(email, password)
+      toast.success('Login Successfull ', {
+        position: "top-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       setemail('');
       setpassword('');
       router.push('/profile')
