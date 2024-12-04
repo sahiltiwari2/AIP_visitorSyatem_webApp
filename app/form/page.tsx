@@ -12,7 +12,7 @@ import { departments, typeOfVisitors } from "@/data";
 import { FaCamera } from "react-icons/fa";
 
 const Form = () => {
-  const numbers = [1, 2, 3, 4, 5];
+  const numbers = [0, 1, 2, 3, 4, 5];
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
