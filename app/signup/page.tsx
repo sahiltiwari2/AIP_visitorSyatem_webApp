@@ -12,6 +12,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation'
 import { ref, set } from "firebase/database";
+import {} from "@/data";    
 
 const signup = () => {
     const router = useRouter()
@@ -140,11 +141,11 @@ const signup = () => {
                     </div>
                     <Divider className="my-4 w-5/12" />
                 </div>
-                <div className='px-5'>
+                {/* <div className='px-5'>
                     <Button color="primary" variant="ghost" className='w-full h-11 text-xl mt-4' onClick={handleGoogleSignIn}>
                         Login Using Google
                     </Button>
-                </div>
+                </div> */}
             </div>
             <div className='flex flex-row gap-2 justify-center w-screen mt-3'>
                 <div>
