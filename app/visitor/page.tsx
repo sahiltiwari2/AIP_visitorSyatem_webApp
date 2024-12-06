@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { getDatabase, ref, query, orderByChild, equalTo, limitToLast, onValue } from "firebase/database";
 import VisitorUpcomingCard from '@/components/visitorUpcomingCard';
 import VisitorCheckedCard from '@/components/visitorCheckedin';
+import { auth } from '@/firebase';
 
 const VisitorOverview = () => {
   type AppointmentEntry = {
@@ -27,6 +28,8 @@ const VisitorOverview = () => {
 
   const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>([]);
   const [checkedInEntries, setCheckedInEntries] = useState<CheckedInEntry[]>([]);
+  const isLoggedIn = auth.currentUser !== null;
+
 
   useEffect(() => {
     // Fetch pending approvals
@@ -88,7 +91,7 @@ const VisitorOverview = () => {
   return (
     <div>
       <TopBar pageName="Visitor Overview" />
-      <div className="w-screen grid grid-cols-1 lg:grid-cols-2 gap-1 px-5 pt-1">
+      <div className={isLoggedIn ? "w-screen grid grid-cols-1 lg:grid-cols-2 gap-1 px-5 pt-1" : "w-screen grid grid-cols-1 lg:grid-cols-1 gap-1 px-5 pt-1"}>
         <Link href={'/visitorToday'}>
           <div className="flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg lg:w-auto w-full">
             <div className="text-2xl">
@@ -99,7 +102,7 @@ const VisitorOverview = () => {
           </div>
         </Link>
         <Link href={'/upcomingVisitors'}>
-          <div className="hidden lg:flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg">
+          <div className={isLoggedIn ? "lg:flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg" : "hidden"}>
             <div className="text-2xl">
               <IoLocationOutline />
             </div>
@@ -108,9 +111,9 @@ const VisitorOverview = () => {
           </div>
         </Link>
       </div>
-      <div className="w-screen px-5">
+      <div className={isLoggedIn ? "w-screen px-5" : "hidden"}>
         <Link href={'/pendingRequests'}>
-          <div className=" hidden w-full mt-1 lg:flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg">
+          <div className="w-full mt-1 lg:flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg">
             <div className="text-2xl">
               <RiMailSettingsLine />
             </div>
@@ -119,8 +122,8 @@ const VisitorOverview = () => {
           </div>
         </Link>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-2 w-screen">
-        <div className="m-5 pt-5 text-center border-2 py-5 rounded-lg shadow-md h-full">
+      <div className={isLoggedIn ? "grid grid-cols-2 w-screen" : "grid grid-cols-1  w-screen"}>
+        <div className={isLoggedIn ? "m-5 pt-5 text-center border-2 py-5 rounded-lg shadow-md h-full" : "hidden"}>
           <div className="font-bold text-2xl">Checked In</div>
           <div className='flex flex-col justify-center items-center'>
             {checkedInEntries.map((entry, index) => (

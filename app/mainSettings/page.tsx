@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { ref, get, set, push, child } from "firebase/database";
-import { database } from '@/firebase';
+import { auth, database } from '@/firebase';
 import TopBar from '@/components/topBar';
 import { FaPencilAlt } from "react-icons/fa";
 import { Button } from '@nextui-org/button';
@@ -10,9 +10,12 @@ import { IoMail } from "react-icons/io5";
 import { FaLock } from "react-icons/fa6";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { departments } from "@/data";
 import Email from "@/public/email.json";
+import { FaUserLock } from "react-icons/fa";
+import { useCreateUserWithEmailAndPassword, useSignInWithEmailAndPassword } from "react-firebase-hooks/auth"
+import { Select, SelectItem } from '@nextui-org/react';
 
 const Page = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -25,14 +28,116 @@ const Page = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [admin, setAdmin] = useState(false);
+  const [accounts, setAccounts] = useState([]);
+  const [newEmail, setNewEmail] = useState("");
+  const [deleteEmail, setDeleteEmail] = useState("");
+  const [department, setDepartment] = useState("");
+  const [password, setpassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [takePassword, settakePassword] = useState(false);
 
+
+  // Function to create the user account in the firebase without logging out the current user 
+  const [SignInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth)
+  const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
+
+  const takePasswordfromUser = async () => {
+    settakePassword(true);
+  }
+
+  const makeANewUser = async () => {
+    try {
+      settakePassword(false);
+      signOut(auth)
+      const res = await SignInWithEmailAndPassword(email , password)
+      if (res) {
+        const res = await createUserWithEmailAndPassword(newEmail, "123456");
+        if (res) {
+          signOut(auth)
+          const res = await SignInWithEmailAndPassword(email , password)
+        }
+      }
+      
+      // logic for creating a new account
+    } catch (error) {
+    }
+    addAccount();
+  }
+
+  //  This code is for api that adds and removes emails from email.json in public folder
+  const fetchAccounts = async () => {
+    const response = await fetch("/email.json");
+    const data = await response.json();
+    setAccounts(data.accounts);
+  };
+
+  const addAccount = async () => {
+    if (!newEmail)
+
+    try {
+      const response = await fetch('/api/createUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ newEmail, department }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log(data.message); // "User created successfully!"
+      } else {
+        console.error('Error:', data.error);
+      }
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
+
+    const response = await fetch("/api/accounts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: newEmail }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      setAccounts(result.data.accounts);
+      setNewEmail("");
+      // alert(result.message);
+    } else {
+      // alert(result.message);
+    }
+  };
+
+  const removeAccount = async () => {
+    if (!deleteEmail) return alert("Please enter an email");
+
+    const response = await fetch("/api/accounts", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: deleteEmail }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      setAccounts(result.data.accounts);
+      setDeleteEmail("");
+      alert(result.message);
+    } else {
+      alert(result.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+  // API code ends here
 
 
 
   useEffect(() => {
     const dbRef = ref(database);
-
-
 
     // Fetch user details
     const fetchUserDetails = async (userEmail: string) => {
@@ -128,6 +233,8 @@ const Page = () => {
 
   }, [email])
 
+
+
   return (
     <div className='mb-10'>
       <TopBar pageName='Settings' />
@@ -216,8 +323,82 @@ const Page = () => {
           )}
         </div>
       </div>
+
+      {/* Ui for adding and removing emails */}
+      <div className={admin ? '' : "hidden"}>
+        <div className="">
+          <h1 className="text-2xl font-bold pt-5 pl-5">Manage Accounts</h1>
+
+          {/* Display Accounts */}
+          <div className="mb-6 w-screen p-5">
+            <div className='w-full border-2 p-10 rounded-md'>
+              <h2 className="text-xl font-bold flex gap-2"><FaUserLock className='text-3xl' />Current Accounts:</h2>
+              <ul className="list-disc list-inside p-5">
+                {accounts.map((email, index) => (
+                  <li key={index}>{email}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Add Account */}
+          <div className="mb-4 p-5">
+            <h2 className="text-xl font-bold">Add Account:</h2>
+            <div className='flex  '>
+              <input
+                type="email"
+                placeholder="Enter email to add"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                className="border p-2 mt-5 rounded-md mr-2 h-14 "
+              />
+              <Select
+                label="Department"
+                placeholder="Select a Department"
+                className="w-full pt-5 mb-4"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+              >
+                {departments.map((dept) => (
+                  <SelectItem key={dept.key} value={dept.key}>
+                    {dept.label}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
+            <button onClick={takePasswordfromUser} className="bg-blue-400 font-bold text-white px-4 py-2 rounded w-32">
+              Add
+            </button>
+            <div className={takePassword ? "" : "hidden"}>
+              <input
+                type="password"
+                placeholder="Enter your account password"
+                value={password}
+                onChange={(e) => setpassword(e.target.value)}
+                className="border p-2 mt-5 rounded-md mr-2 h-14 w-[250px]"
+              />
+              <Button className='ml-auto' variant='ghost' onClick={makeANewUser}>Continue</Button>
+            </div>
+          </div>
+
+          {/* Remove Account */}
+          <div className="mb-6">
+            <h2 className="text-xl font-bold">Remove Account:</h2>
+            <input
+              type="email"
+              placeholder="Enter email to remove"
+              value={deleteEmail}
+              onChange={(e) => setDeleteEmail(e.target.value)}
+              className="border p-2 mr-2"
+            />
+            <button onClick={removeAccount} className="bg-red-500 text-white px-4 py-2 rounded">
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
       <div className={!admin ? 'w-screen  pl-10 font-bold text-xl' : "hidden"}>
-          You are not an admin
+        You are not an admin
       </div>
 
       <div className='font-bold text-2xl m-5 mt-10'>Security Settings</div>

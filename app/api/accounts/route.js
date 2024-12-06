@@ -1,51 +1,76 @@
-import fs from "fs";
+import { promises as fs } from "fs";
 import path from "path";
-import { NextResponse } from "next/server";
 
-const filePath = path.join(process.cwd(), "data", "email.json");
-
-const readJSON = () => {
-  const data = fs.readFileSync(filePath, "utf-8");
-  return JSON.parse(data);
-};
-
-const writeJSON = (data) => {
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
-};
+const emailFilePath = path.join(process.cwd(), "public", "email.json");
 
 export async function POST(req) {
-  const { email } = await req.json();
+  let data = { accounts: [], admins: [] };
 
-  if (!email) {
-    return NextResponse.json({ message: "Email is required" }, { status: 400 });
+  try {
+    const fileData = await fs.readFile(emailFilePath, "utf-8");
+    data = JSON.parse(fileData);
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      console.error("Error reading email.json:", error);
+      return new Response(JSON.stringify({ message: "Server error" }), { status: 500 });
+    }
+    console.log("email.json does not exist. Initializing with default values.");
   }
 
-  const data = readJSON();
+  const body = await req.json();
+  const { email } = body;
 
-  if (!data.accounts.includes(email)) {
-    data.accounts.push(email);
-    writeJSON(data);
-    return NextResponse.json({ message: "Email added successfully", data });
-  } else {
-    return NextResponse.json({ message: "Email already exists", data }, { status: 409 });
+  if (!email || !email.includes("@")) {
+    return new Response(JSON.stringify({ message: "Invalid email address" }), { status: 400 });
+  }
+
+  if (data.accounts.includes(email)) {
+    return new Response(JSON.stringify({ message: "Email already exists" }), { status: 400 });
+  }
+
+  data.accounts.push(email);
+
+  try {
+    await fs.writeFile(emailFilePath, JSON.stringify(data, null, 2));
+    return new Response(JSON.stringify({ message: "Email added successfully", data }), { status: 200 });
+  } catch (error) {
+    console.error("Error writing to email.json:", error);
+    return new Response(JSON.stringify({ message: "Failed to update email.json" }), { status: 500 });
   }
 }
 
 export async function DELETE(req) {
-  const { email } = await req.json();
+  let data = { accounts: [], admins: [] };
 
-  if (!email) {
-    return NextResponse.json({ message: "Email is required" }, { status: 400 });
+  try {
+    const fileData = await fs.readFile(emailFilePath, "utf-8");
+    data = JSON.parse(fileData);
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      console.error("Error reading email.json:", error);
+      return new Response(JSON.stringify({ message: "Server error" }), { status: 500 });
+    }
+    console.log("email.json does not exist. Initializing with default values.");
   }
 
-  const data = readJSON();
-  const index = data.accounts.indexOf(email);
+  const body = await req.json();
+  const { email } = body;
 
-  if (index !== -1) {
-    data.accounts.splice(index, 1);
-    writeJSON(data);
-    return NextResponse.json({ message: "Email removed successfully", data });
-  } else {
-    return NextResponse.json({ message: "Email not found", data }, { status: 404 });
+  if (!email || !email.includes("@")) {
+    return new Response(JSON.stringify({ message: "Invalid email address" }), { status: 400 });
+  }
+
+  if (!data.accounts.includes(email)) {
+    return new Response(JSON.stringify({ message: "Email not found" }), { status: 404 });
+  }
+
+  data.accounts = data.accounts.filter((acc) => acc !== email);
+
+  try {
+    await fs.writeFile(emailFilePath, JSON.stringify(data, null, 2));
+    return new Response(JSON.stringify({ message: "Email removed successfully", data }), { status: 200 });
+  } catch (error) {
+    console.error("Error writing to email.json:", error);
+    return new Response(JSON.stringify({ message: "Failed to update email.json" }), { status: 500 });
   }
 }
