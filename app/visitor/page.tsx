@@ -122,7 +122,7 @@ const VisitorOverview = () => {
           </div>
         </Link>
       </div>
-      <div className={isLoggedIn ? "grid grid-cols-2 w-screen" : "grid grid-cols-1  w-screen"}>
+      <div className={isLoggedIn ? "grid grid-cols-2 w-screen" : "hidden"}>
         <div className={isLoggedIn ? "m-5 pt-5 text-center border-2 py-5 rounded-lg shadow-md h-full" : "hidden"}>
           <div className="font-bold text-2xl">Checked In</div>
           <div className='flex flex-col justify-center items-center'>

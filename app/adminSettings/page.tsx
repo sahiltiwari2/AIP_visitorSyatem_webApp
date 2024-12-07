@@ -129,12 +129,12 @@ const Page = () => {
                             value={email || ''}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={!isEditingEmail}
-                            endContent={
-                                <FaPencilAlt
-                                    className="mb-2 text-xl cursor-pointer"
-                                    onClick={() => setIsEditingEmail(!isEditingEmail)}
-                                />
-                            }
+                            // endContent={
+                            //     <FaPencilAlt
+                            //         className="mb-2 text-xl cursor-pointer"
+                            //         onClick={() => setIsEditingEmail(!isEditingEmail)}
+                            //     />
+                            // }
                         />
                         {isEditingEmail && (
                             <button
