@@ -10,9 +10,12 @@ import { ClipLoader } from 'react-spinners';
 import { getDatabase, ref, set } from "firebase/database";
 import { departments, typeOfVisitors } from "@/data";
 import { FaCamera } from "react-icons/fa";
+import { useRouter } from 'next/navigation'
 
 const Form = () => {
   const numbers = [0, 1, 2, 3, 4, 5];
+
+  const router = useRouter()
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -141,6 +144,18 @@ const Form = () => {
       console.error(error);
     } finally {
       setIsLoading(false);
+      setName('');
+      setDate('');
+      setDepartment('');
+      setEmail("");
+      setNumber('');
+      setPurpose('');
+      setRepresentativeEmail('');
+      setTimeofMeeting('');
+      setTypeOfVisit('');
+      setTimeout(() => {
+        router.push('/');
+      }, 2000);
     }
   };
 
@@ -280,7 +295,7 @@ const Form = () => {
             onChange={(e) => handleTimeChange(e.target.value)} // Custom handler
             required
             variant="bordered"
-            // description="Working hours from 9 AM to 6 PM"
+          // description="Working hours from 9 AM to 6 PM"
           />
 
 
@@ -298,14 +313,14 @@ const Form = () => {
             ))}
           </Select>
 
-            <Button
-              className=" w-full text-xl mb-5 h-12"
-              variant='ghost'
-              color='secondary'
-            >
-              <FaCamera />
-              Take photo
-            </Button>
+          <Button
+            className=" w-full text-xl mb-5 h-12"
+            variant='ghost'
+            color='secondary'
+          >
+            <FaCamera />
+            Take photo
+          </Button>
 
           {showCameraMessage && (
             <div className="p-4 mt-4 bg-red-100 text-red-700 border border-red-500 rounded-md m-5">

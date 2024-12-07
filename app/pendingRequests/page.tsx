@@ -4,6 +4,8 @@ import { getDatabase, ref, onValue, query, remove, set } from "firebase/database
 import { Accordion, AccordionItem, Button, Select, SelectItem } from "@nextui-org/react";
 import TopBar from "@/components/topBar";
 import { departments } from "@/data";
+import { auth } from '@/firebase'
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const Page = () => {
   type AppointmentEntry = {
@@ -22,42 +24,54 @@ const Page = () => {
     departmentOfWork: string;
     approvalStatus: string;
   };
-
+  const dbRef = ref(getDatabase());
   const [pendingApprovals, setPendingApprovals] = useState<AppointmentEntry[]>([]);
-  const [department, setDepartment] = useState(departments[1]?.key || ''); 
+  const [department, setDepartment] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setEmail(user.email || "")
+      }
+    });
     const fetchPendingApprovals = async () => {
       const db = getDatabase();
-  
+      const starCountRef = ref(db, 'users/' + email.split("@")[0] + '/department');
+      onValue(starCountRef, (snapshot) => {
+         setDepartment(snapshot.val());
+      });
+
+
       if (!department) {
-        setPendingApprovals([]); 
+        setPendingApprovals([]);
         return;
       }
-  
+
       const departmentRef = ref(db, `appointmentsPending/${department}`);
-  
+
       onValue(departmentRef, (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val() as Record<string, AppointmentEntry>;
-  
+
           const approvals: AppointmentEntry[] = Object.entries(data).map(
             ([id, entry]) => ({
               id,
-              ...(entry as AppointmentEntry), 
+              ...(entry as AppointmentEntry),
             })
           );
-  
+
           setPendingApprovals(approvals);
         } else {
-          setPendingApprovals([]); 
+          setPendingApprovals([]);
         }
       });
     };
-  
+
     fetchPendingApprovals();
   }, [department]);
-   
+
   const handleReject = async (entryId: string) => {
     const db = getDatabase();
     try {
@@ -69,7 +83,7 @@ const Page = () => {
       console.error("Error rejecting appointment:", error);
     }
   };
-  
+
 
   const handleApprove = async (entryId: string, entry: AppointmentEntry) => {
     const db = getDatabase();
@@ -92,7 +106,8 @@ const Page = () => {
   return (
     <div>
       <TopBar pageName="Pending Approvals" />
-      <Select
+      {/* {email} */}
+      {/* <Select
         label="Department"
         placeholder="Select a Department"
         className="w-[250px] pt-5 m-5"
@@ -104,7 +119,7 @@ const Page = () => {
             {department.label}
           </SelectItem>
         ))}
-      </Select>
+      </Select> */}
       <div className="mt-4 space-y-6 flex flex-col items-center w-screen ">
         {pendingApprovals.map((entry, index) => (
           <div key={entry.id || index} className="border-2 p-4 rounded shadow-sm">
