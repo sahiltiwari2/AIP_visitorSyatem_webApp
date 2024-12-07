@@ -16,6 +16,7 @@ import Email from "@/public/email.json";
 import { FaUserLock } from "react-icons/fa";
 import { useCreateUserWithEmailAndPassword, useSignInWithEmailAndPassword } from "react-firebase-hooks/auth"
 import { Select, SelectItem } from '@nextui-org/react';
+import { getDatabase } from "firebase/database";
 
 const Page = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -49,19 +50,25 @@ const Page = () => {
     try {
       settakePassword(false);
       signOut(auth)
-      const res = await SignInWithEmailAndPassword(email , password)
+      const res = await SignInWithEmailAndPassword(email, password)
       if (res) {
         const res = await createUserWithEmailAndPassword(newEmail, "123456");
         if (res) {
           signOut(auth)
-          const res = await SignInWithEmailAndPassword(email , password)
+          const res = await SignInWithEmailAndPassword(email, password)
         }
       }
-      
+
       // logic for creating a new account
     } catch (error) {
     }
     addAccount();
+    const db = getDatabase();
+    set(ref(db, 'users/' + newEmail.split('@')[0]), {
+      username: newEmail.split('@')[0],
+      email: newEmail,
+      department: department
+    });
   }
 
   //  This code is for api that adds and removes emails from email.json in public folder
@@ -74,25 +81,25 @@ const Page = () => {
   const addAccount = async () => {
     if (!newEmail)
 
-    try {
-      const response = await fetch('/api/createUser', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ newEmail, department }),
-      });
+      try {
+        const response = await fetch('/api/createUser', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ newEmail, department }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        console.log(data.message); // "User created successfully!"
-      } else {
-        console.error('Error:', data.error);
+        if (response.ok) {
+          console.log(data.message); // "User created successfully!"
+        } else {
+          console.error('Error:', data.error);
+        }
+      } catch (error) {
+        console.error('Error creating user:', error);
       }
-    } catch (error) {
-      console.error('Error creating user:', error);
-    }
 
     const response = await fetch("/api/accounts", {
       method: "POST",
