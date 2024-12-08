@@ -36,9 +36,9 @@ const Page = () => {
   const [password, setpassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [takePassword, settakePassword] = useState(false);
-  
+
   // Function to reset password for the user 
-  const resetPass = async() => {
+  const resetPass = async () => {
     sendPasswordResetEmail(auth, email).then(() => {
       toast.success('Email to reset your password is send !', {
         position: "top-right",
@@ -49,7 +49,7 @@ const Page = () => {
         draggable: true,
         progress: undefined,
         theme: "light"
-        });
+      });
     })
   }
 
@@ -272,7 +272,7 @@ const Page = () => {
         </div>
       </div>
 
-      <div className='font-bold text-2xl m-5 mt-10'>Notifications</div>
+      <div className={ admin ? 'font-bold text-2xl m-5 mt-10' : 'hidden'}>Admin Settings</div>
       <div className={admin ? 'w-screen flex justify-between items-center px-5' : "hidden"}>
         <div className='w-full border-2 flex items-center rounded-lg p-5 shadow-sm'>
           <div className='flex flex-col gap-2 text-xl p-2 px-5 rounded-md'>
@@ -419,9 +419,7 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className={!admin ? 'w-screen  pl-10 font-bold text-xl' : "hidden"}>
-        You are not an admin
-      </div>
+      
 
       <div className='font-bold text-2xl m-5 mt-10'>Security Settings</div>
       <div className='w-screen flex justify-between items-center px-5 mt-3'>
