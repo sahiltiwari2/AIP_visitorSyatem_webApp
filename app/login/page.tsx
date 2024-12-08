@@ -25,19 +25,33 @@ const login = () => {
   const handelSingIn = async () => {
     if (Emails.accounts.includes(email)) {
       const res = await SignInWithEmailAndPassword(email, password)
-      toast.success('Login Successfull ', {
-        position: "top-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      setemail('');
-      setpassword('');
-      router.push('/profile')
+      if (res) {
+        toast.success('Login Successfull ', {
+          position: "top-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setemail('');
+        setpassword('');
+        router.push('/profile')
+      }
+      else{
+        toast.error('Incorrect Password', {
+          position: "top-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     }
     else {
       toast('User not Authorized for login ', {
@@ -64,9 +78,9 @@ const login = () => {
       });
 
       toast.success('Logged in with Google!', { position: "top-left", theme: "dark" });
-      setTimeout(() => {
-        router.push('/adminSettings');
-      }, 2000);
+      // setTimeout(() => {
+      //   router.push('/adminSettings');
+      // }, 2000);
     } catch (error) {
 
     }
