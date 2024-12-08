@@ -1,12 +1,15 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import TopBar from '@/components/topBar';
-import { FaRegUser, FaPencilAlt } from 'react-icons/fa';
+import { FaRegUser, FaPencilAlt, FaLock } from 'react-icons/fa';
 import { child, get, getDatabase, ref, set } from 'firebase/database';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth';
 import { Input } from '@nextui-org/input';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Link from 'next/link';
+import { Button } from '@nextui-org/button';
+import { auth } from '@/firebase';
 
 const Page = () => {
     const dbRef = ref(getDatabase());
@@ -18,6 +21,22 @@ const Page = () => {
     const [isEditingEmail, setIsEditingEmail] = useState(false);
     const [isEditingNumber, setIsEditingNumber] = useState(false);
 
+    const resetPass = async () => {
+        if (email) {
+            sendPasswordResetEmail(auth, email).then(() => {
+                    toast.success('Email to reset your password is sent !', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light"
+                });
+            })  
+        }
+    }
     useEffect(() => {
         toast('Make sure to enter your username and phone number', {
             position: 'top-left',
@@ -129,12 +148,12 @@ const Page = () => {
                             value={email || ''}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={!isEditingEmail}
-                            // endContent={
-                            //     <FaPencilAlt
-                            //         className="mb-2 text-xl cursor-pointer"
-                            //         onClick={() => setIsEditingEmail(!isEditingEmail)}
-                            //     />
-                            // }
+                        // endContent={
+                        //     <FaPencilAlt
+                        //         className="mb-2 text-xl cursor-pointer"
+                        //         onClick={() => setIsEditingEmail(!isEditingEmail)}
+                        //     />
+                        // }
                         />
                         {isEditingEmail && (
                             <button
@@ -177,7 +196,18 @@ const Page = () => {
             <div className='font-bold text-2xl mt-10 ml-5'>
                 Password
             </div>
-            <div className='w-screen'>
+            <div className='w-screen flex justify-between items-center px-5 mt-3 mb-10'>
+                <Link href="/">
+                    <div className='flex flex-row gap-4 text-xl'>
+                        <div className='mt-1'>
+                            <FaLock />
+                        </div>
+                        <span className='text-xl'>Change Password</span>
+                    </div>
+                </Link>
+                <Button className='ml-auto' variant='ghost' onClick={resetPass}>Change</Button>
+            </div>
+            {/* <div className='w-screen'>
                 <div className='items-center w-auto mx-5'>
                     <Input
                         type="password"
@@ -185,8 +215,8 @@ const Page = () => {
                         label="Current Password"
                         placeholder="Enter your current password"
                         className="pt-5"
-                    // value={number}
-                    // onChange={(e) => setnumber(e.target.value)}
+                    value={number}
+                    onChange={(e) => setnumber(e.target.value)}
                     />
                     <Input
                         type="password"
@@ -194,8 +224,8 @@ const Page = () => {
                         label="New Password"
                         placeholder="Enter your New password"
                         className="pt-5"
-                    // value={number}
-                    // onChange={(e) => setnumber(e.target.value)}
+                    value={number}
+                    onChange={(e) => setnumber(e.target.value)}
                     />
                     <Input
                         type="password"
@@ -203,17 +233,17 @@ const Page = () => {
                         label="Confirm Password"
                         placeholder="Enter your New password"
                         className="pt-5"
-                    // value={number}
-                    // onChange={(e) => setnumber(e.target.value)}
+                    value={number}
+                    onChange={(e) => setnumber(e.target.value)}
                     />
-                    {/* <Input
+                    <Input
                         type="password"
                         label="Password"
                         labelPlacement="outside"
                         placeholder="Enter your password here"
                         className='p-5 '
-                    // value={password}
-                    // onChange={(e) => setpassword(e.target.value)}
+                    value={password}
+                    onChange={(e) => setpassword(e.target.value)}
                     />
 
                     <Input
@@ -222,11 +252,11 @@ const Page = () => {
                         labelPlacement="outside"
                         placeholder="Confirm your password"
                         className='p-5 '
-                    // value={confirmPassword}
-                    // onChange={(e) => setconfirmPassword(e.target.value)}
-                    /> */}
+                    value={confirmPassword}
+                    onChange={(e) => setconfirmPassword(e.target.value)}
+                    />
                 </div>
-            </div>
+            </div> */}
             <ToastContainer />
         </div>
     );

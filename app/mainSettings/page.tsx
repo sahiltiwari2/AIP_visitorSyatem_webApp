@@ -10,7 +10,7 @@ import { IoMail } from "react-icons/io5";
 import { FaLock } from "react-icons/fa6";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { departments } from "@/data";
 import Email from "@/public/email.json";
 import { FaUserLock } from "react-icons/fa";
@@ -36,7 +36,22 @@ const Page = () => {
   const [password, setpassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [takePassword, settakePassword] = useState(false);
-
+  
+  // Function to reset password for the user 
+  const resetPass = async() => {
+    sendPasswordResetEmail(auth, email).then(() => {
+      toast.success('Email to reset your password is send !', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light"
+        });
+    })
+  }
 
   // Function to create the user account in the firebase without logging out the current user 
   const [SignInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth)
@@ -418,7 +433,7 @@ const Page = () => {
             <span className='text-xl'>Change Password</span>
           </div>
         </Link>
-        <Button className='ml-auto' variant='ghost'>Change</Button>
+        <Button className='ml-auto' variant='ghost' onClick={resetPass}>Change</Button>
       </div>
       <ToastContainer />
     </div>

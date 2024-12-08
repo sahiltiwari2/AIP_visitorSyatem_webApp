@@ -5,6 +5,7 @@ import { getDatabase, ref, onValue, set, remove, query, get } from 'firebase/dat
 import { Accordion, AccordionItem, Button } from '@nextui-org/react';
 import TopBar from '@/components/topBar';
 import VisitorCheckedCard from '@/components/visitorCheckedin';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 type AppointmentEntry = {
   id?: string;
@@ -27,6 +28,9 @@ const Page = () => {
   const [appointments, setAppointments] = useState<AppointmentEntry[]>([]);
   const [timeNow, setTimeNow] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<string>('');
+  const [userEmail, setUserEmail] = useState("");
+  const [userDepartment, setUserDepartment] = useState("");
+
   type CheckedInEntry = {
     checkedInTime: string; // Updated to use checkedInTime
     id?: string;
@@ -48,6 +52,17 @@ const Page = () => {
   const [checkedInEntries, setCheckedInEntries] = useState<CheckedInEntry[]>([]);
 
   useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserEmail(user.email || "")
+      }
+    });
+    const db = getDatabase();
+      const starCountRef = ref(db, 'users/' + userEmail.split("@")[0] + '/department');
+      onValue(starCountRef, (snapshot) => {
+         setUserDepartment(snapshot.val());
+      });
     const updateCurrentTime = () => {
       const now = new Date();
       const formattedTime = now.toLocaleString('en-US', {
@@ -98,12 +113,12 @@ const Page = () => {
             approvalStatus: entry.approvalStatus,
           }));
 
-          // // Filter only entries with today's date
-          // const todayCheckedInEntries = checkedInList.filter(
-          //   (entry) => entry.dateOfVisit === currentDate
-          // );
+          // Filter only entries with today's date
+          const todayCheckedInEntries = checkedInList.filter(
+            (entry) => entry.dateOfVisit === currentDate
+          );
 
-          // setCheckedInEntries(todayCheckedInEntries);
+          setCheckedInEntries(todayCheckedInEntries);
 
           setCheckedInEntries(checkedInList);
         } else {
@@ -145,7 +160,7 @@ const Page = () => {
 
         // Filter appointments to show only those for the current date
         const filteredAppointments = fetchedAppointments.filter(
-          (appointment) => appointment.dateOfVisit === currentDate
+          (appointment) => appointment.dateOfVisit === currentDate 
         );
 
         setAppointments(filteredAppointments);
