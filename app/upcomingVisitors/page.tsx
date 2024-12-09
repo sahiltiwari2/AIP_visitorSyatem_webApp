@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getDatabase, ref, onValue, set, remove } from 'firebase/database';
+import { getDatabase, ref, onValue, set, remove, get, child } from 'firebase/database';
 import { Accordion, AccordionItem, Button } from '@nextui-org/react';
 import TopBar from '@/components/topBar';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { departments } from '@/data';
 
 type AppointmentEntry = {
   id?: string;
@@ -23,10 +25,20 @@ type AppointmentEntry = {
 };
 
 const Page = () => {
+  const dbRef = ref(getDatabase());
   const [appointments, setAppointments] = useState<AppointmentEntry[]>([]);
   const [currentDate, setCurrentDate] = useState<string>('');
+  const [userDepartment, setUserDepartment] = useState('');
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setEmail(user.email);
+      }
+    });
+    
     const updateCurrentDate = () => {
       const now = new Date();
       const formattedDate = now.toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
@@ -35,6 +47,16 @@ const Page = () => {
 
     updateCurrentDate();
   }, []);
+  if (email) {
+    get(child(dbRef, `users/${email.split("@")[0]}/department`))
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        setUserDepartment(snapshot.val());
+      } else {
+        console.log("No user data available");
+      }
+    })
+  }
 
   // useEffect(() => {
   //   const db = getDatabase();
@@ -85,9 +107,11 @@ const Page = () => {
         const today = new Date();
         const currentDate = today.toISOString().split('T')[0];
   
-        // Filter appointments to show only those with a future date
+        // Filter appointments to show only those with a future date and matching department
         const filteredAppointments = fetchedAppointments.filter(
-          (appointment) => appointment.dateOfVisit > currentDate
+          (appointment) =>
+            appointment.dateOfVisit > currentDate &&
+            appointment.departmentOfWork === userDepartment // Check department
         );
   
         // Optionally sort appointments by date (earliest first)
@@ -100,7 +124,8 @@ const Page = () => {
         setAppointments([]);
       }
     });
-  }, []);
+  }, [userDepartment]); // Add userDepartment as a dependency
+  
   
   
 
@@ -130,7 +155,7 @@ const Page = () => {
   };
 
   return (
-    <div>
+    <div>     
       <TopBar pageName="Future Visitors" />
       <div className="mt-4 space-y-6 flex flex-col items-center w-screen">
         {appointments.map((entry, index) => (
