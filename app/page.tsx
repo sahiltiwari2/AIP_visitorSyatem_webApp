@@ -27,12 +27,19 @@ export default function Home() {
         1995 to meet international standards, and now nearly 50% of their output is exported to 35 countries.
       </div>
       <div className="w-full h-[250px] border-2 flex items-center justify-center text-3xl font-extrabold">
-  <iframe
+  {/* <iframe
     src="https://player.vimeo.com/video/1033563803?h=f13e776813&title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=1&controls=0"
     allow="autoplay;"
     style={{ width: "100%", height: "250px" }}
     title="homeVid"
-  ></iframe>
+  ></iframe> */}
+  <iframe 
+    width="500" 
+    height="250" 
+    src="https://www.youtube.com/embed/Ca_85iPEzNM?autoplay=1&mute=1&controls=0&fs=0&modestbranding=1&rel=0" 
+    title="Abilities India Pistons & Rings Ltd 1" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share">
+</iframe>
 </div>
 
 
