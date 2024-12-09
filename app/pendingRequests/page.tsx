@@ -28,50 +28,58 @@ const Page = () => {
   const [pendingApprovals, setPendingApprovals] = useState<AppointmentEntry[]>([]);
   const [department, setDepartment] = useState("");
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setEmail(user.email || "")
+        setEmail(user.email || "");
       }
     });
+  
     const fetchPendingApprovals = async () => {
       const db = getDatabase();
       const starCountRef = ref(db, 'users/' + email.split("@")[0] + '/department');
       onValue(starCountRef, (snapshot) => {
-         setDepartment(snapshot.val());
+        setDepartment(snapshot.val());
       });
-
-
+  
       if (!department) {
         setPendingApprovals([]);
+        setIsLoading(false);
         return;
       }
-
+  
       const departmentRef = ref(db, `appointmentsPending/${department}`);
-
+  
       onValue(departmentRef, (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val() as Record<string, AppointmentEntry>;
-
           const approvals: AppointmentEntry[] = Object.entries(data).map(
             ([id, entry]) => ({
               id,
               ...(entry as AppointmentEntry),
             })
           );
-
+          approvals.sort((a, b) => {
+            const dateA = new Date(a.dateOfVisit).getTime();
+            const dateB = new Date(b.dateOfVisit).getTime();
+            return dateA - dateB; // Ascending order
+          });          
           setPendingApprovals(approvals);
         } else {
           setPendingApprovals([]);
         }
+        setIsLoading(false);
       });
     };
-
+  
     fetchPendingApprovals();
   }, [department]);
+  
 
+  
   const handleReject = async (entryId: string) => {
     const db = getDatabase();
     try {
@@ -103,7 +111,7 @@ const Page = () => {
     }
   };
 
-  return (
+  return isLoading ? <div>Loading...</div> :(
     <div>
       <TopBar pageName="Pending Approvals" />
       {/* {email} */}

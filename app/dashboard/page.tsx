@@ -179,7 +179,6 @@ const DashboardPage = () => {
               {todaysVisitor}
             </div>
           </div>
-        
         </div>
         <div className='w-full px-5 py-5'>
           <div className='flex flex-col justify-center border-2 py-3 px-10 rounded-md shadow-md'>
@@ -276,4 +275,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default DashboardPage; 

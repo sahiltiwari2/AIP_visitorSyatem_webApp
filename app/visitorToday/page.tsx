@@ -112,13 +112,11 @@ const Page = () => {
             departmentOfWork: entry.departmentOfWork,
             approvalStatus: entry.approvalStatus,
           }));
-
-          // Filter only entries with today's date
-          const todayCheckedInEntries = checkedInList.filter(
-            (entry) => entry.dateOfVisit === currentDate
-          );
-
-          setCheckedInEntries(todayCheckedInEntries);
+          checkedInList.sort((a, b) => {
+            const dateA = new Date(a.dateOfVisit).getTime();
+            const dateB = new Date(b.dateOfVisit).getTime();
+            return dateA - dateB;
+          });
 
           setCheckedInEntries(checkedInList);
         } else {
@@ -162,6 +160,11 @@ const Page = () => {
         const filteredAppointments = fetchedAppointments.filter(
           (appointment) => appointment.dateOfVisit === currentDate
         );
+        filteredAppointments.sort((a, b) => {
+          const dateA = new Date(a.dateOfVisit).getTime();
+          const dateB = new Date(b.dateOfVisit).getTime();
+          return dateA - dateB; // Ascending order
+        });
 
         setAppointments(filteredAppointments);
       } else {

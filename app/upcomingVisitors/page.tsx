@@ -203,7 +203,7 @@ const Page = () => {
                   </AccordionItem>
                 </Accordion>
               </div>
-              <div className="flex gap-2">
+              {/* <div className="flex gap-2">
                 <Button
                   variant="ghost"
                   color="success"
@@ -212,7 +212,7 @@ const Page = () => {
                 >
                   Check In Now
                 </Button>
-              </div>
+              </div> */}
             </div>
           </div>
         ))}
