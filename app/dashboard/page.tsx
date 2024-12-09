@@ -30,6 +30,54 @@ const DashboardPage = () => {
   const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>([]);
   const [checkedInEntries, setCheckedInEntries] = useState<CheckedInEntry[]>([]);
   const [todaysVisitor, setTodaysVisitor] = useState<number>(0);
+  const [visitorCount, setVisitorCount] = useState<number | null>(null);
+  const [currentWeek, setCurrentWeek] = useState<number>(1);
+  const [currentMonth, setCurrentMonth] = useState<string>('');
+  const [currentYear, setCurrentYear] = useState<string>('');
+
+  // Helper function to calculate the current week
+  const getCurrentWeek = (date: Date): number => {
+    const dayOfMonth = date.getDate();
+    return Math.ceil(dayOfMonth / 7); // Week number (1-5)
+  };
+
+  // Function to fetch the weekly visitors data from Firebase
+  const fetchWeeklyVisitors = async (year: string, month: string, week: number) => {
+    const db = getDatabase();
+    const weeklyVisitorsRef = ref(db, `weeklyVisitors/${year}-${month}/week${week}`);
+
+    try {
+      const snapshot = await get(weeklyVisitorsRef);
+      if (snapshot.exists()) {
+        const visitorCount = snapshot.val();
+        console.log(`Visitor count for week ${week} of ${month}-${year}: ${visitorCount}`);
+        setVisitorCount(visitorCount);
+      } else {
+        console.log(`No data found for week ${week} of ${month}-${year}`);
+        setVisitorCount(0);
+      }
+    } catch (error) {
+      console.error('Error fetching weekly visitors:', error);
+      setVisitorCount(0);
+    }
+  };
+
+  useEffect(() => {
+    const now = new Date();
+
+    // Get the current year, month, and week
+    const year = now.getFullYear().toString();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // 1-based, padded to 2 digits
+    const week = getCurrentWeek(now);
+
+    setCurrentYear(year);
+    setCurrentMonth(month);
+    setCurrentWeek(week);
+
+    // Fetch data for the current week
+    fetchWeeklyVisitors(year, month, week);
+  }, []);
+
 
 
   type TimeFrame = 'Week' | 'Month' | 'Year';  // Valid time frames
@@ -139,7 +187,7 @@ const DashboardPage = () => {
               Total This Week
             </div>
             <div>
-              {todaysVisitor}
+              {visitorCount}
             </div>
           </div>
         </div>

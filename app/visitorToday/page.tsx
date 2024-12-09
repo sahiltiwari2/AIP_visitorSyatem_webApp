@@ -59,10 +59,10 @@ const Page = () => {
       }
     });
     const db = getDatabase();
-      const starCountRef = ref(db, 'users/' + userEmail.split("@")[0] + '/department');
-      onValue(starCountRef, (snapshot) => {
-         setUserDepartment(snapshot.val());
-      });
+    const starCountRef = ref(db, 'users/' + userEmail.split("@")[0] + '/department');
+    onValue(starCountRef, (snapshot) => {
+      setUserDepartment(snapshot.val());
+    });
     const updateCurrentTime = () => {
       const now = new Date();
       const formattedTime = now.toLocaleString('en-US', {
@@ -138,7 +138,7 @@ const Page = () => {
     const initializeDailyVisitors = async () => {
       const db = getDatabase();
       const todayVisitorsRef = ref(db, `todayVisitors/${currentDate}`);
-  
+
       // Check if there is an entry for today
       const snapshot = await get(todayVisitorsRef);
       if (!snapshot.exists()) {
@@ -160,7 +160,7 @@ const Page = () => {
 
         // Filter appointments to show only those for the current date
         const filteredAppointments = fetchedAppointments.filter(
-          (appointment) => appointment.dateOfVisit === currentDate 
+          (appointment) => appointment.dateOfVisit === currentDate
         );
 
         setAppointments(filteredAppointments);
@@ -169,6 +169,47 @@ const Page = () => {
       }
     });
   }, [currentDate]);
+
+  const handleCheckOut = async (entryId: string) => {
+    const db = getDatabase();
+    try {
+      const now = new Date();
+      const formattedTime = now.toLocaleString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+      });
+  
+      const checkedInRef = ref(db, `checkedIn/${entryId}`);
+      const snapshot = await get(checkedInRef);
+  
+      if (snapshot.exists()) {
+        const entry = snapshot.val();
+  
+        // Move the entry to the `checkedOut` section with checkout time
+        const checkedOutRef = ref(db, `checkedOut/${entryId}`);
+        await set(checkedOutRef, {
+          ...entry,
+          checkedOutTime: formattedTime, // Add checkout time
+        });
+  
+        // Remove the entry from the `checkedIn` section
+        await remove(checkedInRef);
+  
+        console.log(`Checked out and moved to checkedOut section at ${formattedTime}`);
+  
+        // Update local state to remove the checked-out entry
+        setCheckedInEntries((prevEntries) =>
+          prevEntries.filter((item) => item.id !== entryId)
+        );
+      } else {
+        console.error('Entry not found in database.');
+      }
+    } catch (error) {
+      console.error('Error during checkout:', error);
+    }
+  };
+  
 
   const handleApprove = async (entryId: string, entry: AppointmentEntry) => {
     const db = getDatabase();
@@ -179,42 +220,39 @@ const Page = () => {
         ...entry,
         checkedInTime: timeNow, // Add the current time as checkedInTime
       });
-  
+
       // Remove entry from approvedAppointments
       const pendingRef = ref(db, `approvedAppointments/${entryId}`);
       await remove(pendingRef);
-  
+
       // Determine the week number
       const dayOfMonth = new Date().getDate();
       const weekNumber = Math.ceil(dayOfMonth / 7); // Calculate week number (1-4)
-  
+
       // Increment today's visitor count
       const todayVisitorsRef = ref(db, `todayVisitors/${currentDate}`);
       const snapshot = await get(todayVisitorsRef);
       const currentCount = snapshot.exists() ? snapshot.val() : 0;
       await set(todayVisitorsRef, currentCount + 1);
-  
+
       // Increment the week's visitor count
       const weekVisitorsRef = ref(db, `weeklyVisitors/${currentDate.slice(0, 7)}/week${weekNumber}`);
       const weekSnapshot = await get(weekVisitorsRef);
       const currentWeekCount = weekSnapshot.exists() ? weekSnapshot.val() : 0;
       await set(weekVisitorsRef, currentWeekCount + 1);
-  
+
       // Update the local state
       setAppointments((prev) => prev.filter((item) => item.id !== entryId));
     } catch (error) {
       console.error("Error approving appointment:", error);
     }
   };
-  
-  
+
+
 
   return (
     <div>
       <TopBar pageName="Today's Visitors" />
-      {/* <div className="text-center font-bold text-lg my-2">
-        Current Time: {timeNow}
-      </div> */}
       <div className="mt-4 space-y-6 flex flex-col items-center w-screen">
         {appointments.map((entry, index) => (
           <div key={entry.id || index} className="border-2 p-4 rounded shadow-sm">
@@ -384,10 +422,20 @@ const Page = () => {
                     </AccordionItem>
                   </Accordion>
                 </div>
-
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    color="warning"
+                    className="w-36 h-11"
+                    onClick={() => handleCheckOut(entry.id!)}
+                  >
+                    Checked Out
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
+
         </div>
       </div>
     </div>
