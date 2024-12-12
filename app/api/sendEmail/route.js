@@ -24,12 +24,12 @@ export async function POST(req) {
     try {
       console.log("Fetching emails from Firebase...");
       const [masterEmailSnap, hrEmailSnap, devEmailSnap] = await Promise.all([
-        get(child(dbRef, 'departments/masterMail/email')),
+        get(child(dbRef, 'currenMasterEmail')),
         get(child(dbRef, 'departments/hr/email')),
         get(child(dbRef, 'departments/development/email'))
       ]);
 
-      console.log("Firebase fetch complete.");
+      console.log("Firebase fetch complete.");  
       return {
         masterEmail: masterEmailSnap.exists() ? masterEmailSnap.val() : null,
         hrEmail: hrEmailSnap.exists() ? hrEmailSnap.val() : null,
