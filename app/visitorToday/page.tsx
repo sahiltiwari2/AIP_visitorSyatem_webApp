@@ -1,3 +1,4 @@
+// https://script.google.com/macros/s/AKfycbzAWu2uVsRihWEV8TCiiGM9vc92HlGnyikO-EYI71wfySVkq_pKx-XyVYH5N8A7sd7kIw/exec
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -195,6 +196,38 @@ const Page = () => {
           ...entry,
           checkedOutTime: formattedTime, // Add checkout time
         });
+  
+        // Send data to Google Sheets
+        const response = await fetch(
+          'https://script.google.com/macros/s/AKfycbzAWu2uVsRihWEV8TCiiGM9vc92HlGnyikO-EYI71wfySVkq_pKx-XyVYH5N8A7sd7kIw/exec',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: JSON.stringify({
+              id: entryId,
+              name: entry.name,
+              timeOfVisit: entry.timeOfVisit,
+              email: entry.email,
+              phonenumber: entry.phonenumber,
+              dateOfVisit: entry.dateOfVisit,
+              purposeOfVisit: entry.purposeOfVisit,
+              numberOfVisitors: entry.numberOfVisitors,
+              visitorsNames: entry.visitorsNames,
+              visitorsEmails: entry.visitorsEmails,
+              visitorsNumbers: entry.visitorsNumbers,
+              representativeEmail: entry.representativeEmail,
+              departmentOfWork: entry.departmentOfWork,
+              approvalStatus: entry.approvalStatus,
+              checkedOutTime: formattedTime,
+            }),
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error(`Failed to send data to Google Sheets: ${response.statusText}`);
+        }
+  
+        console.log(`Data sent to Google Sheets successfully: ${entryId}`);
   
         // Remove the entry from the `checkedIn` section
         await remove(checkedInRef);
