@@ -17,10 +17,10 @@ export const departments = [
   { key: "development", label: "Development" }
 ];
 export const typeOfVisitors = [
-  { key: "Orders", label: "Order" },
-  { key: "Interviews", label: "Interview" },
+  { key: "Order", label: "Order" },
+  { key: "Interview", label: "Interview" },
   { key: "Enquiry", label: "Enquiry" },
-  { key: "Meetings", label: "Meeting" },
+  { key: "Meeting", label: "Meeting" },
 ];
 export const TimeFrames = [
   { key: 'Week', label: '7 Days' },

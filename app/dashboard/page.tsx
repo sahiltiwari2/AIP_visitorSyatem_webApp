@@ -223,7 +223,7 @@ const DashboardPage = () => {
             Type Of Visitors
           </div>
           <div className='pl-3 pt-7'>
-            <VisitorTypesChart />
+            <VisitorTypesChart timeFrame={TimeFrame}/>
           </div>
         </div>
         <div className='w-[1100px] border-2 shadow-md p-3 rounded-md  relative flex flex-row justify-center items-centers'>

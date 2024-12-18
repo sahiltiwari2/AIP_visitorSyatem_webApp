@@ -12,6 +12,7 @@ type AppointmentEntry = {
   id?: string;
   name: string;
   timeOfVisit: string;
+  typeOfVisit: string;
   email: string;
   phonenumber: number;
   dateOfVisit: string;
@@ -36,6 +37,7 @@ const Page = () => {
     checkedInTime: string; // Updated to use checkedInTime
     id?: string;
     name: string;
+    typeOfVisit: string;
     timeOfVisit: string;
     email: string;
     phonenumber: number;
@@ -101,6 +103,7 @@ const Page = () => {
             checkedInTime: entry.checkedInTime,
             id: entry.id,
             timeOfVisit: entry.timeOfVisit,
+            typeOfVisit: entry.typeOfVisit,
             email: entry.email,
             phonenumber: entry.phonenumber,
             dateOfVisit: entry.dateOfVisit,
@@ -183,57 +186,58 @@ const Page = () => {
         minute: 'numeric',
         hour12: false,
       });
-  
+
       const checkedInRef = ref(db, `checkedIn/${entryId}`);
       const snapshot = await get(checkedInRef);
-  
+
       if (snapshot.exists()) {
         const entry = snapshot.val();
-  
+
         // Move the entry to the `checkedOut` section with checkout time
         const checkedOutRef = ref(db, `checkedOut/${entryId}`);
         await set(checkedOutRef, {
           ...entry,
           checkedOutTime: formattedTime, // Add checkout time
         });
-  
+
         // Send data to Google Sheets
-        const response = await fetch(
-          'https://script.google.com/macros/s/AKfycbzAWu2uVsRihWEV8TCiiGM9vc92HlGnyikO-EYI71wfySVkq_pKx-XyVYH5N8A7sd7kIw/exec',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: JSON.stringify({
-              id: entryId,
-              name: entry.name,
-              timeOfVisit: entry.timeOfVisit,
-              email: entry.email,
-              phonenumber: entry.phonenumber,
-              dateOfVisit: entry.dateOfVisit,
-              purposeOfVisit: entry.purposeOfVisit,
-              numberOfVisitors: entry.numberOfVisitors,
-              visitorsNames: entry.visitorsNames,
-              visitorsEmails: entry.visitorsEmails,
-              visitorsNumbers: entry.visitorsNumbers,
-              representativeEmail: entry.representativeEmail,
-              departmentOfWork: entry.departmentOfWork,
-              approvalStatus: entry.approvalStatus,
-              checkedOutTime: formattedTime,
-            }),
-          }
-        );
-  
-        if (!response.ok) {
-          throw new Error(`Failed to send data to Google Sheets: ${response.statusText}`);
-        }
-  
-        console.log(`Data sent to Google Sheets successfully: ${entryId}`);
-  
+        // const response = await fetch(
+        //   'https://script.google.com/macros/s/AKfycbzAWu2uVsRihWEV8TCiiGM9vc92HlGnyikO-EYI71wfySVkq_pKx-XyVYH5N8A7sd7kIw/exec',
+        //   {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        //     body: JSON.stringify({
+        //       id: entryId,
+        //       name: entry.name,
+        //       timeOfVisit: entry.timeOfVisit,
+        //       email: entry.email,
+        //       typeOfVisit: entry.typeOfVisit,
+        //       phonenumber: entry.phonenumber,
+        //       dateOfVisit: entry.dateOfVisit,
+        //       purposeOfVisit: entry.purposeOfVisit,
+        //       numberOfVisitors: entry.numberOfVisitors,
+        //       visitorsNames: entry.visitorsNames,
+        //       visitorsEmails: entry.visitorsEmails,
+        //       visitorsNumbers: entry.visitorsNumbers,
+        //       representativeEmail: entry.representativeEmail,
+        //       departmentOfWork: entry.departmentOfWork,
+        //       approvalStatus: entry.approvalStatus,
+        //       checkedOutTime: formattedTime,
+        //     }),
+        //   }
+        // );
+
+        // if (!response.ok) {
+        //   throw new Error(`Failed to send data to Google Sheets: ${response.statusText}`);
+        // }
+
+        // console.log(`Data sent to Google Sheets successfully: ${entryId}`);
+
         // Remove the entry from the `checkedIn` section
         await remove(checkedInRef);
-  
+
         console.log(`Checked out and moved to checkedOut section at ${formattedTime}`);
-  
+
         // Update local state to remove the checked-out entry
         setCheckedInEntries((prevEntries) =>
           prevEntries.filter((item) => item.id !== entryId)
@@ -245,7 +249,7 @@ const Page = () => {
       console.error('Error during checkout:', error);
     }
   };
-  
+
 
   const handleApprove = async (entryId: string, entry: AppointmentEntry) => {
     const db = getDatabase();
@@ -277,6 +281,12 @@ const Page = () => {
       const currentWeekCount = weekSnapshot.exists() ? weekSnapshot.val() : 0;
       await set(weekVisitorsRef, currentWeekCount + 1);
 
+      // Update the totalTypeOfVisit
+      const totalTypeOfVisitRef = ref(db, `totalTypeOfVisit/${currentDate}/${entry.typeOfVisit}`);
+      const typeSnapshot = await get(totalTypeOfVisitRef);
+      const currentTypeCount = typeSnapshot.exists() ? typeSnapshot.val() : 0;
+      await set(totalTypeOfVisitRef, currentTypeCount + 1);
+
       // Update the local state
       setAppointments((prev) => prev.filter((item) => item.id !== entryId));
     } catch (error) {
@@ -297,6 +307,7 @@ const Page = () => {
               <div>
                 <span className="font-semibold">Email: </span>
                 {entry.email}
+
               </div>
               <div>
                 <span className="font-semibold">Phone Number: </span>

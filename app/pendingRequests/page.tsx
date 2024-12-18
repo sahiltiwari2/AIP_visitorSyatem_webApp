@@ -99,7 +99,7 @@ const Page = () => {
       // Add entry to approvedAppointments
       const approvedRef = ref(db, "approvedAppointments/" + entryId);
       await set(approvedRef, entry);
-
+   
       // Remove entry from appointmentsPending/<department>
       const pendingRef = ref(db, `appointmentsPending/${department}/${entryId}`);
       await remove(pendingRef);
