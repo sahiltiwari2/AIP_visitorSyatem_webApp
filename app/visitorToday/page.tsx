@@ -7,6 +7,7 @@ import { Accordion, AccordionItem, Button } from '@nextui-org/react';
 import TopBar from '@/components/topBar';
 import VisitorCheckedCard from '@/components/visitorCheckedin';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import axios from 'axios';
 
 type AppointmentEntry = {
   id?: string;
@@ -199,6 +200,29 @@ const Page = () => {
           ...entry,
           checkedOutTime: formattedTime, // Add checkout time
         });
+
+        const data = {
+          id: entryId,
+          name: entry.name,
+          timeOfVisit: entry.timeOfVist,
+          email: entry.email,
+          typeOfVisit: entry.typeOfVisit,
+          phonenumber: entry.phonenumber,
+          dateOfVisit: entry.dateOfVisit,
+          purposeOfVisit: entry.purposeOfVisit,
+          numberOfVisitors: entry.numberOfVisitors,
+          visitorsNames: entry.visitorsNames,
+          visitorsEmails: entry.visitorsEmails,
+          visitorsNumbers: entry.visitorsNumbers,
+          representativeEmail: entry.representativeEmail,
+          departmentOfWork: entry.departmentOfWork,
+          approvalStatus: entry.approvalStatus,
+          checkedOutTime: formattedTime,
+        }
+
+        axios.post('https://api.sheetbest.com/sheets/e7e0a471-b4af-46cb-97bf-fa244cdc69c1', data).then((response) => {
+          console.log(response);
+        })
 
         // Send data to Google Sheets
         // const response = await fetch(

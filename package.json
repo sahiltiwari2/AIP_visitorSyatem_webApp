@@ -26,6 +26,7 @@
 		"@react-aria/ssr": "3.9.4",
 		"@react-aria/visually-hidden": "3.8.12",
 		"add": "^2.0.6",
+		"axios": "^1.7.9",
 		"chakra": "^0.0.3",
 		"chart.js": "^4.4.6",
 		"clsx": "^2.1.1",

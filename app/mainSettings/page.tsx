@@ -17,6 +17,7 @@ import { FaUserLock } from "react-icons/fa";
 import { useCreateUserWithEmailAndPassword, useSignInWithEmailAndPassword } from "react-firebase-hooks/auth"
 import { Select, SelectItem } from '@nextui-org/react';
 import { getDatabase } from "firebase/database";
+import { Arrow } from '@chakra-ui/react/dist/types/components/hover-card/namespace';
 
 const Page = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -404,7 +405,7 @@ const Page = () => {
           </div>
 
           {/* Remove Account */}
-          <div className="mb-6">
+          <div className="mb-6 ml-5">
             <h2 className="text-xl font-bold">Remove Account:</h2>
             <input
               type="email"
@@ -432,6 +433,19 @@ const Page = () => {
           </div>
         </Link>
         <Button className='ml-auto' variant='ghost' onClick={resetPass}>Change</Button>
+      </div>
+      <div className='font-bold text-2xl m-5 mt-10'>Database Access</div>
+      <div className='w-screen flex justify-between items-center px-5 mt-3'>
+        
+          <div className='flex flex-row gap-4 text-xl'>
+            <div className='mt-1'>
+              <FaLock />
+            </div>
+            <span className='text-xl'>Go To DataBase</span>
+          </div>
+        <Link href="https://docs.google.com/spreadsheets/d/1QfiLb5tb3dY2G9cIZgdJF4AeYbI4uEujnzNqKR-Hz3E/edit?usp=sharing">
+        <Button className='ml-auto' variant='ghost'>{"->"}</Button>
+      </Link>
       </div>
       <ToastContainer />
     </div>
