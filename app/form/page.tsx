@@ -4,6 +4,7 @@ import TopBar from '@/components/topBar';
 import { Input } from '@nextui-org/input';
 import { Button, Select, SelectItem } from '@nextui-org/react';
 import Link from 'next/link';
+import { useRef } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ClipLoader } from 'react-spinners';
@@ -13,6 +14,43 @@ import { FaCamera } from "react-icons/fa";
 import { useRouter } from 'next/navigation'
 
 const Form = () => {
+
+
+  // Camera Logic
+  const videoRef = useRef<HTMLVideoElement | null>(null); // Define the type explicitly
+  const [isCameraOn, setIsCameraOn] = useState(false);
+
+  const openCamera = async () => {
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream; // TypeScript now knows srcObject exists
+          videoRef.current.play();
+          setIsCameraOn(true);
+        }
+      } else {
+        alert('Camera not supported in this browser.');
+      }
+    } catch (err) {
+      console.error('Error accessing the camera:', err);
+      alert('Unable to access the camera. Please check your permissions.');
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream; // Explicit type assertion
+      const tracks = stream.getTracks();
+
+      tracks.forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+    }
+    setIsCameraOn(false);
+  };
+
+
+  // Camera logic ends here
   const numbers = [0, 1, 2, 3, 4, 5];
 
   const router = useRouter()
@@ -317,16 +355,19 @@ const Form = () => {
             className=" w-full text-xl mb-5 h-12"
             variant='ghost'
             color='secondary'
+            onClick={isCameraOn ? stopCamera : openCamera}
           >
             <FaCamera />
-            Take photo
+            {isCameraOn ? "Click To Capture" : 'Take Photo'}
           </Button>
 
-          {showCameraMessage && (
-            <div className="p-4 mt-4 bg-red-100 text-red-700 border border-red-500 rounded-md m-5">
-              Camera not found
-            </div>
-          )}
+          <div className={isCameraOn ? 'flex justify-center items-center m-5 rounded-lg' : "hidden"}>
+            <video
+            className=' rounded-lg border-2 shadow-md'
+              ref={videoRef}
+              style={{ width: '100%', maxWidth: '600px'}}
+            />
+          </div>
 
           <Button
             style={{ background: '#17C6ED' }}
