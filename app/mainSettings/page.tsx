@@ -211,15 +211,9 @@ const Page = () => {
   const handleMasterEmailChange = async () => {
     if (!newMasterEmail) return;
 
-    const emailRef = ref(database, 'currenMasterEmail');
-    const logsRef = ref(database, 'logs');
-
+    const emailRef = ref(database, 'departments/masterEmail/email');
     try {
       await set(emailRef, newMasterEmail);
-      await push(logsRef, {
-        email: newMasterEmail,
-        changedAt: new Date().toISOString(),
-      });
       setCurrentMasterEmail(newMasterEmail);
       setNewMasterEmail('');
       setIsEditingMasterEmail(false);

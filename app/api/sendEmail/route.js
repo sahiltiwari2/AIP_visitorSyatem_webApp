@@ -24,7 +24,7 @@ export async function POST(req) {
     try {
       console.log("Fetching emails from Firebase...");
       const [masterEmailSnap, hrEmailSnap, devEmailSnap] = await Promise.all([
-        get(child(dbRef, 'currenMasterEmail')),
+        get(child(dbRef, 'departments/masterEmail/email')),
         get(child(dbRef, 'departments/hr/email')),
         get(child(dbRef, 'departments/development/email'))
       ]);
