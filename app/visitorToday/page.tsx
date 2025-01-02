@@ -300,8 +300,6 @@ const Page = () => {
     }
   };
 
-
-
   return (
     <div>
       <TopBar pageName="Today's Visitors" />

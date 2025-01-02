@@ -60,7 +60,7 @@ const Form = () => {
   const [number, setNumber] = useState('');
   const [date, setDate] = useState('');
   const [purpose, setPurpose] = useState('');
-  const [visitors, setVisitors] = useState('');
+  const [visitors, setVisitors] = useState('0');
   const [visitorNames, setVisitorNames] = useState<string[]>([]);
   const [representativeEmail, setRepresentativeEmail] = useState('');
   const [department, setDepartment] = useState('');
@@ -269,7 +269,7 @@ const Form = () => {
           <Select
             label="Members in Group"
             placeholder="Select a Number"
-            className="w-full "
+            className={visitors == "0" ? "w-full pb-5" : "w-full"}
             value={visitors}
             onChange={(e) => handleVisitorsChange(e.target.value)}
           >
@@ -312,15 +312,15 @@ const Form = () => {
             </div>
           ))}
 
-          <Input
-            type="email"
-            variant="bordered"
-            label="Representative's Email Address"
-            placeholder="Enter Email Address"
-            className="pt-5 pb-5"
-            value={representativeEmail}
-            onChange={(e) => setRepresentativeEmail(e.target.value)}
-          />
+            <Input
+              type="email"
+              variant="bordered"
+              label="Representative's Email Address"
+              placeholder="Enter Email Address"
+              className={visitors != "0" ? "pt-5 pb-5" : "hidden"}
+              value={representativeEmail}
+              onChange={(e) => setRepresentativeEmail(e.target.value)}
+            />
           <Input
             type="time"
             id="appt"
@@ -363,9 +363,9 @@ const Form = () => {
 
           <div className={isCameraOn ? 'flex justify-center items-center m-5 rounded-lg' : "hidden"}>
             <video
-            className=' rounded-lg border-2 shadow-md'
+              className=' rounded-lg border-2 shadow-md'
               ref={videoRef}
-              style={{ width: '100%', maxWidth: '600px'}}
+              style={{ width: '100%', maxWidth: '600px' }}
             />
           </div>
 
