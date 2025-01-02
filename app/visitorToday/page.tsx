@@ -8,8 +8,10 @@ import TopBar from '@/components/topBar';
 import VisitorCheckedCard from '@/components/visitorCheckedin';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import axios from 'axios';
+import { Input } from "@nextui-org/react";
 
 type AppointmentEntry = {
+  batchNumber: any;
   id?: string;
   name: string;
   timeOfVisit: string;
@@ -33,6 +35,7 @@ const Page = () => {
   const [currentDate, setCurrentDate] = useState<string>('');
   const [userEmail, setUserEmail] = useState("");
   const [userDepartment, setUserDepartment] = useState("");
+  const [batchNumber, setBatchNumber] = useState("");
 
   type CheckedInEntry = {
     checkedInTime: string; // Updated to use checkedInTime
@@ -224,38 +227,6 @@ const Page = () => {
           console.log(response);
         })
 
-        // Send data to Google Sheets
-        // const response = await fetch(
-        //   'https://script.google.com/macros/s/AKfycbzAWu2uVsRihWEV8TCiiGM9vc92HlGnyikO-EYI71wfySVkq_pKx-XyVYH5N8A7sd7kIw/exec',
-        //   {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        //     body: JSON.stringify({
-        //       id: entryId,
-        //       name: entry.name,
-        //       timeOfVisit: entry.timeOfVisit,
-        //       email: entry.email,
-        //       typeOfVisit: entry.typeOfVisit,
-        //       phonenumber: entry.phonenumber,
-        //       dateOfVisit: entry.dateOfVisit,
-        //       purposeOfVisit: entry.purposeOfVisit,
-        //       numberOfVisitors: entry.numberOfVisitors,
-        //       visitorsNames: entry.visitorsNames,
-        //       visitorsEmails: entry.visitorsEmails,
-        //       visitorsNumbers: entry.visitorsNumbers,
-        //       representativeEmail: entry.representativeEmail,
-        //       departmentOfWork: entry.departmentOfWork,
-        //       approvalStatus: entry.approvalStatus,
-        //       checkedOutTime: formattedTime,
-        //     }),
-        //   }
-        // );
-
-        // if (!response.ok) {
-        //   throw new Error(`Failed to send data to Google Sheets: ${response.statusText}`);
-        // }
-
-        // console.log(`Data sent to Google Sheets successfully: ${entryId}`);
 
         // Remove the entry from the `checkedIn` section
         await remove(checkedInRef);
@@ -276,18 +247,26 @@ const Page = () => {
 
 
   const handleApprove = async (entryId: string, entry: AppointmentEntry) => {
+    if (!batchNumber) {
+      alert("Please enter a valid batch number before approving.");
+      return;
+    }
     const db = getDatabase();
     try {
       // Add entry to checkedIn with the current time
       const approvedRef = ref(db, `checkedIn/${entryId}`);
       await set(approvedRef, {
         ...entry,
-        checkedInTime: timeNow, // Add the current time as checkedInTime
+        checkedInTime: timeNow,
+        batchNumber: batchNumber,
       });
 
       // Remove entry from approvedAppointments
       const pendingRef = ref(db, `approvedAppointments/${entryId}`);
       await remove(pendingRef);
+
+      // Initialize the batch number 
+      const batchNumberRef = ref(db, `approvedAppointments/${entryId}/batchNumber/${batchNumber}`)
 
       // Determine the week number
       const dayOfMonth = new Date().getDate();
@@ -311,8 +290,11 @@ const Page = () => {
       const currentTypeCount = typeSnapshot.exists() ? typeSnapshot.val() : 0;
       await set(totalTypeOfVisitRef, currentTypeCount + 1);
 
+
+
       // Update the local state
       setAppointments((prev) => prev.filter((item) => item.id !== entryId));
+      setBatchNumber(""); // Clear batch number after successful approval
     } catch (error) {
       console.error("Error approving appointment:", error);
     }
@@ -404,6 +386,15 @@ const Page = () => {
                 >
                   Checked In
                 </Button>
+                <Input
+                  className="max-w-xs h-11"
+                  label="Enter Batch Number"
+                  type="number"
+                  variant="bordered"
+                  value={batchNumber}
+                  onChange={(e) => setBatchNumber(e.target.value)}
+                />
+
               </div>
             </div>
           </div>
