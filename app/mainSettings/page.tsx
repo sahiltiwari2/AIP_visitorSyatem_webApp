@@ -37,6 +37,7 @@ const Page = () => {
   const [password, setpassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [takePassword, settakePassword] = useState(false);
+  const [jsondepartments, setJsonDepartments] = useState([]);
 
   // Function to reset password for the user 
   const resetPass = async () => {
@@ -158,6 +159,17 @@ const Page = () => {
   // API code ends here
 
 
+  useEffect(() => {
+    // Fetch the JSON file from the public folder
+    fetch('/department.json')
+      .then((response) => response.json())
+      .then((data) => {
+        setJsonDepartments(data.departmemt || []); // Set the fetched departments
+      })
+      .catch((error) => {
+        console.error('Error fetching departments:', error);
+      });
+  }, []);
 
   useEffect(() => {
     const dbRef = ref(database);
@@ -267,7 +279,7 @@ const Page = () => {
         </div>
       </div>
 
-      <div className={ admin ? 'font-bold text-2xl m-5 mt-10' : 'hidden'}>Admin Settings</div>
+      <div className={admin ? 'font-bold text-2xl m-5 mt-10' : 'hidden'}>Admin Settings</div>
       <div className={admin ? 'w-screen flex justify-between items-center px-5' : "hidden"}>
         <div className='w-full border-2 flex items-center rounded-lg p-5 shadow-sm'>
           <div className='flex flex-col gap-2 text-xl p-2 px-5 rounded-md'>
@@ -414,8 +426,28 @@ const Page = () => {
           </div>
         </div>
       </div>
-      
 
+      <div className={admin ? '' : "hidden"}>
+        <div className="">
+          <h1 className="text-2xl font-bold pt-5 pl-5">Current Departmetns</h1>
+
+          {/* Display Accounts */}
+          <div className="mb-6 w-screen p-5">
+            <div className='w-full border-2 p-10 rounded-md'>
+              <h2 className="text-xl font-bold flex gap-2"><FaUserLock className='text-3xl' />Current Accounts:</h2>
+              <ul className="list-disc list-inside p-5">
+                {jsondepartments.length > 0 ? (
+                  jsondepartments.map((department, index) => (
+                    <li key={index}>{department}</li>
+                  ))
+                ) : (
+                  <li>Loading...</li>
+                )}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className='font-bold text-2xl m-5 mt-10'>Security Settings</div>
       <div className='w-screen flex justify-between items-center px-5 mt-3'>
         <Link href="/">
@@ -430,16 +462,16 @@ const Page = () => {
       </div>
       <div className='font-bold text-2xl m-5 mt-10'>Database Access</div>
       <div className='w-screen flex justify-between items-center px-5 mt-3'>
-        
-          <div className='flex flex-row gap-4 text-xl'>
-            <div className='mt-1'>
-              <FaLock />
-            </div>
-            <span className='text-xl'>Go To DataBase</span>
+
+        <div className='flex flex-row gap-4 text-xl'>
+          <div className='mt-1'>
+            <FaLock />
           </div>
+          <span className='text-xl'>Go To DataBase</span>
+        </div>
         <Link href="https://docs.google.com/spreadsheets/d/1QfiLb5tb3dY2G9cIZgdJF4AeYbI4uEujnzNqKR-Hz3E/edit?usp=sharing">
-        <Button className='ml-auto' variant='ghost'>{"->"}</Button>
-      </Link>
+          <Button className='ml-auto' variant='ghost'>{"->"}</Button>
+        </Link>
       </div>
       <ToastContainer />
     </div>

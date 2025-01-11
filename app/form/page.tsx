@@ -276,7 +276,7 @@ const Form = () => {
             {numbers.map((num) => (
               <SelectItem key={num} value={num.toString()}>
                 {num}
-              </SelectItem>
+              </SelectItem> 
             ))}
           </Select>
 
