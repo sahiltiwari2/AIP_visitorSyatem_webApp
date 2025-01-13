@@ -38,6 +38,8 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [takePassword, settakePassword] = useState(false);
   const [jsondepartments, setJsonDepartments] = useState([]);
+  const [newDepartment, setNewDepartment] = useState("");
+  const [deleteDepartment, setDeleteDepartment] = useState("");
 
   // Function to reset password for the user 
   const resetPass = async () => {
@@ -162,14 +164,80 @@ const Page = () => {
   useEffect(() => {
     // Fetch the JSON file from the public folder
     fetch('/department.json')
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch departments.');
+        }
+        return response.json();
+      })
       .then((data) => {
-        setJsonDepartments(data.departmemt || []); // Set the fetched departments
+        setJsonDepartments(data.departments || []); // Set the fetched departments
+        setLoading(false); // Fetch complete
       })
       .catch((error) => {
         console.error('Error fetching departments:', error);
+        toast.error('Failed to load departments.');
+        setLoading(false); // Stop loading even on error
       });
   }, []);
+
+
+
+  // Adding Departments
+  const addDepartment = async () => {
+    if (!newDepartment) {
+      toast.error('Please enter a department name.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/departments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ department: newDepartment }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setJsonDepartments(data.departments);
+        setNewDepartment('');
+        toast.success(data.message);
+      } else {
+        toast.error(data.error || 'Failed to add department.');
+      }
+    } catch (error) {
+      console.error('Error adding department:', error);
+      toast.error('Failed to add department.');
+    }
+  };
+
+  // Removing Departments from the json 
+  const removeDepartment = async () => {
+    if (!deleteDepartment) {
+      toast.error('Please enter a department name.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/departments', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ department: deleteDepartment }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setJsonDepartments(data.departments);
+        setDeleteDepartment('');
+        toast.success(data.message);
+      } else {
+        toast.error(data.error || 'Failed to remove department.');
+      }
+    } catch (error) {
+      console.error('Error removing department:', error);
+      toast.error('Failed to remove department.');
+    }
+  };
 
   useEffect(() => {
     const dbRef = ref(database);
@@ -431,10 +499,10 @@ const Page = () => {
         <div className="">
           <h1 className="text-2xl font-bold pt-5 pl-5">Current Departmetns</h1>
 
-          {/* Display Accounts */}
+          {/* Display Departmetns */}
           <div className="mb-6 w-screen p-5">
             <div className='w-full border-2 p-10 rounded-md'>
-              <h2 className="text-xl font-bold flex gap-2"><FaUserLock className='text-3xl' />Current Accounts:</h2>
+              <h2 className="text-xl font-bold flex gap-2"><FaUserLock className='text-3xl' />Current Departments:</h2>
               <ul className="list-disc list-inside p-5">
                 {jsondepartments.length > 0 ? (
                   jsondepartments.map((department, index) => (
@@ -444,6 +512,44 @@ const Page = () => {
                   <li>Loading...</li>
                 )}
               </ul>
+            </div>
+          </div>
+
+          {/* Add Department */}
+          <div className="mb-4 p-5">
+            <h2 className="text-xl font-bold">Add Department:</h2>
+            <div className='flex gap-2'>
+              <input
+                type="text"
+                placeholder="Enter department name"
+                value={newDepartment}
+                onChange={(e) => setNewDepartment(e.target.value)}
+                className="border p-2 mt-5 rounded-md"
+              />
+              <button
+                onClick={addDepartment}
+                className="bg-blue-400 text-white px-4 py-2 rounded mt-5">
+                Add
+              </button>
+            </div>
+          </div>
+
+          {/* Remove Department */}
+          <div className="mb-6 p-5">
+            <h2 className="text-xl font-bold">Remove Department:</h2>
+            <div className='flex gap-2'>
+              <input
+                type="text"
+                placeholder="Enter department name"
+                value={deleteDepartment}
+                onChange={(e) => setDeleteDepartment(e.target.value)}
+                className="border p-2 rounded-md"
+              />
+              <button
+                onClick={removeDepartment}
+                className="bg-red-500 text-white px-4 py-2 rounded">
+                Remove
+              </button>
             </div>
           </div>
         </div>

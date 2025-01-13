@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TopBar from '@/components/topBar';
 import { Input } from '@nextui-org/input';
 import { Button, Select, SelectItem } from '@nextui-org/react';
@@ -9,7 +9,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ClipLoader } from 'react-spinners';
 import { getDatabase, ref, set } from "firebase/database";
-import { departments, typeOfVisitors } from "@/data";
+import { typeOfVisitors } from "@/data";
+import { departments } from "@/public/department.json";
 import { FaCamera } from "react-icons/fa";
 import { useRouter } from 'next/navigation'
 
@@ -19,6 +20,8 @@ const Form = () => {
   // Camera Logic
   const videoRef = useRef<HTMLVideoElement | null>(null); // Define the type explicitly
   const [isCameraOn, setIsCameraOn] = useState(false);
+
+
 
   const openCamera = async () => {
     try {
@@ -70,6 +73,17 @@ const Form = () => {
   const [visitorEmails, setVisitorEmails] = useState<string[]>([]);
   const [visitorNumbers, setVisitorNumbers] = useState<string[]>([]);
   const [showCameraMessage, setShowCameraMessage] = useState(false); // State for showing the camera message
+  const [departments, setDepartments] = useState([]); // State to store department names
+  const [selectedDepartment, setSelectedDepartment] = useState(''); // State for the selected department
+
+  useEffect(() => {
+    // Fetch the departments from the JSON file
+    fetch('/department.json')
+      .then((response) => response.json())
+      .then((data) => setDepartments(data.departments || []))
+      .catch((error) => console.error('Error fetching departments:', error));
+  }, []);
+
 
 
   const handleTimeChange = (value: string) => {
@@ -276,7 +290,7 @@ const Form = () => {
             {numbers.map((num) => (
               <SelectItem key={num} value={num.toString()}>
                 {num}
-              </SelectItem> 
+              </SelectItem>
             ))}
           </Select>
 
@@ -312,15 +326,15 @@ const Form = () => {
             </div>
           ))}
 
-            <Input
-              type="email"
-              variant="bordered"
-              label="Representative's Email Address"
-              placeholder="Enter Email Address"
-              className={visitors != "0" ? "pt-5 pb-5" : "hidden"}
-              value={representativeEmail}
-              onChange={(e) => setRepresentativeEmail(e.target.value)}
-            />
+          <Input
+            type="email"
+            variant="bordered"
+            label="Representative's Email Address"
+            placeholder="Enter Email Address"
+            className={visitors != "0" ? "pt-5 pb-5" : "hidden"}
+            value={representativeEmail}
+            onChange={(e) => setRepresentativeEmail(e.target.value)}
+          />
           <Input
             type="time"
             id="appt"
@@ -337,19 +351,21 @@ const Form = () => {
           />
 
 
-          <Select
-            label="Department"
-            placeholder="Select a Department"
-            className="w-full pt-5 mb-8"
-            value={department}
+          <select
+            className="w-full p-2 border-2 rounded-md mb-5 pt-4 mt-5 pb-4"
+            value={selectedDepartment}
             onChange={(e) => setDepartment(e.target.value)}
+            
           >
-            {departments.map((dept) => (
-              <SelectItem key={dept.key} value={dept.key}>
-                {dept.label}
-              </SelectItem>
+            <option value="" disabled>
+              Select a Department
+            </option>
+            {departments.map((dept, index) => (
+              <option key={index} value={dept}>
+                {dept}
+              </option>
             ))}
-          </Select>
+          </select>
 
           <Button
             className=" w-full text-xl mb-5 h-12"

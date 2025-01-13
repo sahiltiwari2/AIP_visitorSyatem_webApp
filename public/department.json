@@ -1,6 +1,7 @@
 {
-    "departmemt":[
-        "hr",
-        "development"
-    ]
+  "departments": [
+    "HR",
+    "Development",
+    "Sahil"
+  ]
 }
