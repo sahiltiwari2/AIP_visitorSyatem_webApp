@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { ref, get, set, push, child } from "firebase/database";
+import { departments } from "@/public/department.json";
 import { auth, database } from '@/firebase';
 import TopBar from '@/components/topBar';
 import { FaPencilAlt } from "react-icons/fa";
@@ -11,7 +12,6 @@ import { FaLock } from "react-icons/fa6";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getAuth, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { departments } from "@/data";
 import Email from "@/public/email.json";
 import { FaUserLock } from "react-icons/fa";
 import { useCreateUserWithEmailAndPassword, useSignInWithEmailAndPassword } from "react-firebase-hooks/auth"
@@ -40,6 +40,7 @@ const Page = () => {
   const [jsondepartments, setJsonDepartments] = useState([]);
   const [newDepartment, setNewDepartment] = useState("");
   const [deleteDepartment, setDeleteDepartment] = useState("");
+  const [departments, setDepartments] = useState([]); // State to store department names
 
   // Function to reset password for the user 
   const resetPass = async () => {
@@ -56,6 +57,14 @@ const Page = () => {
       });
     })
   }
+
+  useEffect(() => {
+    // Fetch the departments from the JSON file
+    fetch('/department.json')
+      .then((response) => response.json())
+      .then((data) => setDepartments(data.departments || []))
+      .catch((error) => console.error('Error fetching departments:', error));
+  }, []);
 
   // Function to create the user account in the firebase without logging out the current user 
   const [SignInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth)
@@ -86,7 +95,7 @@ const Page = () => {
     set(ref(db, 'users/' + newEmail.split('@')[0]), {
       username: newEmail.split('@')[0],
       email: newEmail,
-      department: department
+      department: selectedDepartment
     });
   }
 
@@ -185,6 +194,12 @@ const Page = () => {
 
   // Adding Departments
   const addDepartment = async () => {
+
+    const db = getDatabase();
+    set(ref(db, "departments/" + newDepartment), {
+      email: "dummy@gmail.com"
+    });
+
     if (!newDepartment) {
       toast.error('Please enter a department name.');
       return;
@@ -382,17 +397,20 @@ const Page = () => {
               <span>Department Email</span>
             </div>
             <select
+              className="w-full p-2 border-2 rounded-md mb-5 pt-4 mt-5 pb-4"
               value={selectedDepartment}
-              onChange={(e) => setSelectedDepartment(e.target.value)}
-              className='border-2 px-2 py-2 rounded-lg mt-2'
+              onChange={(e) => setSelectedDepartment(e.target.value)} // Update this line
             >
-              <option value="" disabled>Select Department</option>
-              {departments.map(dept => (
-                <option key={dept.key} value={dept.key}>
-                  {dept.label}
+              <option value="" disabled>
+                Select a Department
+              </option>
+              {departments.map((dept, index) => (
+                <option key={index} value={dept}>
+                  {dept}
                 </option>
               ))}
             </select>
+
             <span className='text-gray-600 ml-6 mt-2'>
               {currentHrEmail || 'Select a department to view email'}
             </span>
@@ -449,19 +467,21 @@ const Page = () => {
                 onChange={(e) => setNewEmail(e.target.value)}
                 className="border p-2 mt-5 rounded-md mr-2 h-14 "
               />
-              <Select
-                label="Department"
-                placeholder="Select a Department"
-                className="w-full pt-5 mb-4"
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
+              <select
+                className="w-full p-2 border-2 rounded-md mb-5 pt-4 mt-5 pb-4"
+                value={selectedDepartment}
+                onChange={(e) => setSelectedDepartment(e.target.value)} // Update this line
               >
-                {departments.map((dept) => (
-                  <SelectItem key={dept.key} value={dept.key}>
-                    {dept.label}
-                  </SelectItem>
+                <option value="" disabled>
+                  Select a Department
+                </option>
+                {departments.map((dept, index) => (
+                  <option key={index} value={dept}>
+                    {dept}
+                  </option>
                 ))}
-              </Select>
+              </select>
+
             </div>
             <button onClick={takePasswordfromUser} className="bg-blue-400 font-bold text-white px-4 py-2 rounded w-32">
               Add

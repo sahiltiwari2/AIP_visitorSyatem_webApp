@@ -121,6 +121,7 @@ const Page = () => {
     <div>
       <TopBar pageName="Pending Approvals" />
       <div className="mt-4 space-y-6 flex flex-col items-center w-screen">
+        {/* {department} */}
         {pendingApprovals.map((entry, index) => (
           <div key={entry.id || index} className="border-2 p-4 rounded shadow-sm">
             <div className="text-2xl font-semibold">Name: {entry.name}</div>

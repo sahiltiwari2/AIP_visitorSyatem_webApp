@@ -175,7 +175,7 @@ const Form = () => {
         });
 
         const db = getDatabase();
-        set(ref(db, `appointmentsPending/${department}/${email.split("@")[0]}`), {
+        set(ref(db, `appointmentsPending/${selectedDepartment}/${email.split("@")[0]}`), {
           name,
           email,
           phonenumber: number,
@@ -187,7 +187,7 @@ const Form = () => {
           visitorsEmails: visitorEmails,
           visitorsNumbers: visitorNumbers,
           representativeEmail,
-          departmentOfWork: department,
+          departmentOfWork: selectedDepartment,
           approvalStatus: "Pending",
           typeOfVisit: typeOfVisit
         });
@@ -354,8 +354,7 @@ const Form = () => {
           <select
             className="w-full p-2 border-2 rounded-md mb-5 pt-4 mt-5 pb-4"
             value={selectedDepartment}
-            onChange={(e) => setDepartment(e.target.value)}
-            
+            onChange={(e) => setSelectedDepartment(e.target.value)} // Update this line
           >
             <option value="" disabled>
               Select a Department
@@ -366,6 +365,7 @@ const Form = () => {
               </option>
             ))}
           </select>
+
 
           <Button
             className=" w-full text-xl mb-5 h-12"
