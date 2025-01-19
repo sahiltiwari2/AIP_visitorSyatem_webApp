@@ -111,7 +111,7 @@ const VisitorOverview = () => {
           </div>
         </Link>
       </div>
-      <div className={isLoggedIn ? "w-screen px-5" : "hidden"}>
+      <div className=  "w-screen px-5"  >
         <Link href={'/pendingRequests'}>
           <div className="w-full mt-1 lg:flex items-center justify-center flex-col py-9 border-2 rounded-md shadow-sm hover:border-black transition-all duration-400 hover:shadow-lg">
             <div className="text-2xl">

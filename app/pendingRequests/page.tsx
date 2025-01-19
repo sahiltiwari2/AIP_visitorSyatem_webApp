@@ -4,6 +4,7 @@ import { getDatabase, ref, onValue, remove, set } from 'firebase/database';
 import { Accordion, AccordionItem, Button } from '@nextui-org/react';
 import TopBar from '@/components/topBar';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/firebase';
 
 const Page = () => {
   type AppointmentEntry = {
@@ -27,6 +28,9 @@ const Page = () => {
   const [department, setDepartment] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const isLoggedIn = auth.currentUser !== null;
+  const [departments, setDepartments] = useState([]);
+  const [allpendingApprovals, setAllPendingApprovals] = useState<AppointmentEntry[]>([]);
 
   // Fetch the authenticated user's email
   useEffect(() => {
@@ -36,8 +40,55 @@ const Page = () => {
         setEmail(user.email || '');
       }
     });
-    return () => unsubscribe();
+
   }, []);
+
+  useEffect(() => {
+    const fetchAllApprovals = async () => {
+      try {
+        // Step 1: Fetch departments from JSON
+        const response = await fetch('/department.json');
+        const data = await response.json();
+        const fetchedDepartments = data.departments || [];
+        setDepartments(fetchedDepartments);
+
+        // Step 2: Fetch pending approvals for all departments
+        const db = getDatabase();
+        const allApprovals: AppointmentEntry[] = [];
+
+        for (const department of fetchedDepartments) {
+          const departmentRef = ref(db, `appointmentsPending/${department}`);
+          await new Promise<void>((resolve) => {
+            onValue(departmentRef, (snapshot) => {
+              if (snapshot.exists()) {
+                const data = snapshot.val() as Record<string, AppointmentEntry>;
+                const approvals: AppointmentEntry[] = Object.entries(data).map(([id, entry]) => ({
+                  id,
+                  ...(entry as AppointmentEntry),
+                }));
+
+                // Add fetched approvals to the array
+                allApprovals.push(...approvals);
+              }
+              resolve();
+            });
+          });
+        }
+
+        // Step 3: Sort all approvals by dateOfVisit and update state
+        allApprovals.sort((a, b) => new Date(a.dateOfVisit).getTime() - new Date(b.dateOfVisit).getTime());
+        setAllPendingApprovals(allApprovals);
+      } catch (error) {
+        console.error('Error fetching approvals:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllApprovals();
+  }, []);
+
+
 
   // Fetch the user's department
   useEffect(() => {
@@ -115,6 +166,23 @@ const Page = () => {
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+
+  // useEffect(() => {
+  //   // Fetch the departments from the JSON file
+  //   fetch('/department.json')
+  //     .then((response) => response.json())
+  //     .then((data) => setDepartments(data.departments || []))
+  //     .catch((error) => console.error('Error fetching departments:', error));
+  // }, []);
+
+  // Fetch all the approvals and print them
+  const allApprovals = async () => {
+    for (let i = 0; i < departments.length; i++) {
+      const element = departments[i];
+      console.log(element);
+    }
   }
 
   return (
@@ -213,6 +281,102 @@ const Page = () => {
             </div>
           </div>
         ))}
+      </div>
+      <div className={isLoggedIn ?"hidden" : ""}>
+        
+        <div>
+          {allpendingApprovals.map((entry) => (
+            <div key={entry.id} className="border-2 p-4 rounded shadow-sm m-2">
+              <div className="text-2xl font-semibold">Name: {entry.name}</div>
+              <div className="flex gap-8 mt-5">
+                <div>
+                  <span className="font-semibold">Email: </span>
+                  {entry.email}
+                </div>
+                <div>
+                  <span className="font-semibold">Phone Number: </span>
+                  {entry.phonenumber}
+                </div>
+                <div>
+                  <span className="font-semibold">Date of Visit: </span>
+                  {entry.dateOfVisit}
+                </div>
+                <div>
+                  <span className="font-semibold">Time of Visit: </span>
+                  {entry.timeOfVist}
+                </div>
+              </div>
+              <div className="flex gap-8 mt-3">
+                <div>
+                  <span className="font-semibold">Number of Visitors: </span>
+                  {entry.numberOfVisitors}
+                </div>
+                <div>
+                  <span className="font-semibold">Representative Email: </span>
+                  {entry.representativeEmail}
+                </div>
+                <div>
+                  <span className="font-semibold">Department of Work: </span>
+                  {entry.departmentOfWork}
+                </div>
+                <div>
+                  <span className="font-semibold">Approval Status: </span>
+                  {entry.approvalStatus}
+                </div>
+              </div>
+              <div className="mt-3">
+                <span className="font-semibold">Purpose of Visit: </span>
+                {entry.purposeOfVisit}
+              </div>
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <div className="mt-2 border-2 w-[525px] rounded-lg shadow-sm">
+                  <Accordion variant="shadow">
+                    <AccordionItem
+                      key="1"
+                      aria-label="Accordion 1"
+                      subtitle="Press to expand"
+                      title="Visitors Information:"
+                      className=" w-[500px]"
+                    >
+                      {entry.visitorsNames &&
+                        Object.keys(entry.visitorsNames).map((key) => (
+                          <div key={key} className="ml-4 mb-3">
+                            <p>
+                              <strong>Visitor Name:</strong> {entry.visitorsNames![key]}
+                            </p>
+                            <p>
+                              <strong>Visitor Email:</strong> {entry.visitorsEmails?.[key]}
+                            </p>
+                            <p>
+                              <strong>Visitor Number:</strong> {entry.visitorsNumbers?.[key]}
+                            </p>
+                          </div>
+                        ))}
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+                {/* <div className="flex gap-2">
+           <Button
+             variant="ghost"
+             color="success"
+             className="w-36 h-11"
+             onClick={() => handleApprove(entry.id!, entry)}
+           >
+             Accept
+           </Button>
+           <Button
+             variant="ghost"
+             color="warning"
+             className="w-36 h-11"
+             onClick={() => handleReject(entry.id!)}
+           >
+             Reject
+           </Button>
+         </div> */}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
