@@ -8,7 +8,7 @@ import { useRef } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ClipLoader } from 'react-spinners';
-import { getDatabase, ref, set } from "firebase/database";
+import { get, getDatabase, push, ref, set } from "firebase/database";
 import { typeOfVisitors } from "@/data";
 import { departments } from "@/public/department.json";
 import { FaCamera } from "react-icons/fa";
@@ -75,6 +75,7 @@ const Form = () => {
   const [showCameraMessage, setShowCameraMessage] = useState(false); // State for showing the camera message
   const [departments, setDepartments] = useState([]); // State to store department names
   const [selectedDepartment, setSelectedDepartment] = useState(''); // State for the selected department
+  const [isNewEntry, setIsNewEntry] = useState(false);
 
   useEffect(() => {
     // Fetch the departments from the JSON file
@@ -84,7 +85,55 @@ const Form = () => {
       .catch((error) => console.error('Error fetching departments:', error));
   }, []);
 
+// Fetch data if the email exists in the database
+  const fetchOrInitializePerson = async (email: string) => {
+    if (!email) return;
 
+    const db = getDatabase();
+    const peopleRef = ref(db, 'people');
+    const snapshot = await get(peopleRef);
+
+    if (snapshot.exists()) {
+      const people = snapshot.val();
+
+      // Search for the email
+      const personKey = Object.keys(people).find(
+        (key) => people[key].email === email
+      );
+
+      if (personKey) {
+        // If the email exists, fetch the corresponding data
+        setName(people[personKey].name);
+        setNumber(people[personKey].number);
+        setIsNewEntry(false);
+      } else {
+        // If the email does not exist, reset form for new entry
+        setName('');
+        setNumber('');
+        setIsNewEntry(true);
+      }
+    } else {
+      // If no people exist in the database, reset form for new entry
+      setName('');
+      setNumber('');
+      setIsNewEntry(true);
+    }
+  };
+
+
+  const saveNewPerson = async () => {
+    const db = getDatabase();
+    const peopleRef = ref(db, 'people');
+    const newPersonRef = push(peopleRef); // Create a new unique key
+    await set(newPersonRef, {
+      email,
+      name,
+      number,
+    });
+
+    alert('Person added successfully!');
+    setIsNewEntry(false); // Switch back to "existing entry" mode
+  };
 
   const handleTimeChange = (value: string) => {
     const [hours, minutes] = value.split(":").map(Number);
@@ -174,6 +223,7 @@ const Form = () => {
           theme: 'dark',
         });
 
+        saveNewPerson();
         const db = getDatabase();
         set(ref(db, `appointmentsPending/${selectedDepartment}/${email.split("@")[0]}`), {
           name,
@@ -222,6 +272,18 @@ const Form = () => {
             request.
           </div>
           <Input
+            type="email"
+            variant="bordered"
+            label="Email"
+            placeholder="Enter your email"
+            className="pt-5"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              fetchOrInitializePerson(e.target.value); // Trigger search on email change
+            }}
+          />
+          <Input
             type="text"
             variant="bordered"
             label="Full Name"
@@ -229,15 +291,6 @@ const Form = () => {
             className="pt-5"
             value={name}
             onChange={(e) => setName(e.target.value)}
-          />
-          <Input
-            type="email"
-            variant="bordered"
-            label="Email"
-            placeholder="Enter your email"
-            className="pt-5"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
           />
           <Input
             type="number"
