@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/accounts/route.js", "firebase.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/accounts/route.js", "firebase.js", "app/api/uploadProfilePhoto/route.ts"],
   "exclude": ["node_modules"]
 }

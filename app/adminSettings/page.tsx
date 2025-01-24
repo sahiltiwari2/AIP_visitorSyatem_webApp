@@ -10,6 +10,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 import { Button } from '@nextui-org/button';
 import { auth } from '@/firebase';
+import Image from 'next/image';
+import ProfilePhotoUpload from '@/components/profilePhotoUpdate';
 
 const Page = () => {
     const dbRef = ref(getDatabase());
@@ -20,11 +22,13 @@ const Page = () => {
     const [isEditingUsername, setIsEditingUsername] = useState(false);
     const [isEditingEmail, setIsEditingEmail] = useState(false);
     const [isEditingNumber, setIsEditingNumber] = useState(false);
-
+    const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+    const [isPhotoPresent, setIsPhotoPresent] = useState(true)
+    const currentUser = auth.currentUser;
     const resetPass = async () => {
         if (email) {
             sendPasswordResetEmail(auth, email).then(() => {
-                    toast.success('Email to reset your password is sent !', {
+                toast.success('Email to reset your password is sent !', {
                     position: "top-right",
                     autoClose: 5000,
                     hideProgressBar: false,
@@ -34,9 +38,18 @@ const Page = () => {
                     progress: undefined,
                     theme: "light"
                 });
-            })  
+            })
         }
     }
+    useEffect(() => {
+        if (currentUser) {
+            const email = currentUser.email || "";
+            const timestamp = new Date().getTime(); // Generate a timestamp
+            setPhotoUrl(`/profile-photos/${email.replace("@", "_")}.jpg?timestamp=${timestamp}`);
+        }
+    }, [currentUser]);
+
+
     useEffect(() => {
         toast('Make sure to enter your username and phone number', {
             position: 'top-left',
@@ -61,6 +74,7 @@ const Page = () => {
 
     useEffect(() => {
         if (email) {
+
             const userKey = email.split('@')[0];
 
             get(child(dbRef, `users/${userKey}/username`))
@@ -104,7 +118,20 @@ const Page = () => {
             <div className="text-3xl font-bold ml-5 mt-3">Admin profile settings</div>
             <div className="ml-5">Manage your account details and preferences</div>
             <div className="w-screen flex flex-col items-center justify-center text-6xl mt-10">
-                <FaRegUser />
+                <div className={isPhotoPresent ? '' : ' hidden'}>
+                    {photoUrl && (
+                        <Image
+                            src={photoUrl}
+                            alt="Profile Photo"
+                            width={150}
+                            height={150}
+                            onError={(e) => (setIsPhotoPresent(false))} // Default image if photo not found
+                        />
+                    )}
+                </div>
+                <div className={isPhotoPresent ? 'hidden' : ""}>
+                    <FaRegUser />
+                </div>
                 <div className="text-xl mt-1 font-bold">{username}</div>
             </div>
 
@@ -192,6 +219,9 @@ const Page = () => {
                         )}
                     </div>
                 </div>
+            </div>
+            <div>
+                <ProfilePhotoUpload />
             </div>
             <div className='font-bold text-2xl mt-10 ml-5'>
                 Password
