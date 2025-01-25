@@ -5,6 +5,7 @@ import { Accordion, AccordionItem, Button } from '@nextui-org/react';
 import TopBar from '@/components/topBar';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/firebase';
+import Image from 'next/image';
 
 const Page = () => {
   type AppointmentEntry = {
@@ -31,6 +32,7 @@ const Page = () => {
   const isLoggedIn = auth.currentUser !== null;
   const [departments, setDepartments] = useState([]);
   const [allpendingApprovals, setAllPendingApprovals] = useState<AppointmentEntry[]>([]);
+  const [photoPath, setPhotoPath] = useState("");
 
   // Fetch the authenticated user's email
   useEffect(() => {
@@ -188,102 +190,113 @@ const Page = () => {
   return (
     <div>
       <TopBar pageName="Pending Approvals" />
-      <div className="mt-4 space-y-6 flex flex-col items-center w-screen">
+      <div className="mt-4 space-y-6 flex flex-col items-center w-screen ">
         {/* {department} */}
         {pendingApprovals.map((entry, index) => (
-          <div key={entry.id || index} className="border-2 p-4 rounded shadow-sm">
-            <div className="text-2xl font-semibold">Name: {entry.name}</div>
-            <div className="flex gap-8 mt-5">
-              <div>
-                <span className="font-semibold">Email: </span>
-                {entry.email}
+          <div key={entry.id || index} className="flex border-2 p-4 rounded shadow-sm ">
+            <div className=''>
+              <div className="text-2xl font-semibold w-fit">Name: {entry.name}</div>
+              <div className="flex gap-8 mt-5 w-fit ">
+                <div>
+                  <span className="font-semibold">Email: </span>
+                  {entry.email}
+                </div>
+                <div>
+                  <span className="font-semibold">Phone Number: </span>
+                  {entry.phonenumber}
+                </div>
+                <div>
+                  <span className="font-semibold">Date of Visit: </span>
+                  {entry.dateOfVisit}
+                </div>
+                <div>
+                  <span className="font-semibold">Time of Visit: </span>
+                  {entry.timeOfVist}
+                </div>
               </div>
-              <div>
-                <span className="font-semibold">Phone Number: </span>
-                {entry.phonenumber}
+              <div className="flex gap-8 mt-3 w-fit">
+                <div>
+                  <span className="font-semibold">Number of Visitors: </span>
+                  {entry.numberOfVisitors}
+                </div>
+                <div>
+                  <span className="font-semibold">Representative Email: </span>
+                  {entry.representativeEmail}
+                </div>
+                <div>
+                  <span className="font-semibold">Department of Work: </span>
+                  {entry.departmentOfWork}
+                </div>
+                <div>
+                  <span className="font-semibold">Approval Status: </span>
+                  {entry.approvalStatus}
+                </div>
               </div>
-              <div>
-                <span className="font-semibold">Date of Visit: </span>
-                {entry.dateOfVisit}
+              <div className="mt-3 w-fit">
+                <span className="font-semibold">Purpose of Visit: </span>
+                {entry.purposeOfVisit}
               </div>
-              <div>
-                <span className="font-semibold">Time of Visit: </span>
-                {entry.timeOfVist}
-              </div>
-            </div>
-            <div className="flex gap-8 mt-3">
-              <div>
-                <span className="font-semibold">Number of Visitors: </span>
-                {entry.numberOfVisitors}
-              </div>
-              <div>
-                <span className="font-semibold">Representative Email: </span>
-                {entry.representativeEmail}
-              </div>
-              <div>
-                <span className="font-semibold">Department of Work: </span>
-                {entry.departmentOfWork}
-              </div>
-              <div>
-                <span className="font-semibold">Approval Status: </span>
-                {entry.approvalStatus}
-              </div>
-            </div>
-            <div className="mt-3">
-              <span className="font-semibold">Purpose of Visit: </span>
-              {entry.purposeOfVisit}
-            </div>
-            <div className="grid grid-cols-2 gap-4 items-center">
-              <div className="mt-2 border-2 w-[525px] rounded-lg shadow-sm">
-                <Accordion variant="shadow">
-                  <AccordionItem
-                    key="1"
-                    aria-label="Accordion 1"
-                    subtitle="Press to expand"
-                    title="Visitors Information:"
-                    className=" w-[500px]"
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <div className="mt-2 border-2 w-[450px] rounded-lg shadow-sm">
+                  <Accordion variant="shadow">
+                    <AccordionItem
+                      key="1"
+                      aria-label="Accordion 1"
+                      subtitle="Press to expand"
+                      title="Visitors Information:"
+                      className=" w-[500px]"
+                    >
+                      {entry.visitorsNames &&
+                        Object.keys(entry.visitorsNames).map((key) => (
+                          <div key={key} className="ml-4 mb-3">
+                            <p>
+                              <strong>Visitor Name:</strong> {entry.visitorsNames![key]}
+                            </p>
+                            <p>
+                              <strong>Visitor Email:</strong> {entry.visitorsEmails?.[key]}
+                            </p>
+                            <p>
+                              <strong>Visitor Number:</strong> {entry.visitorsNumbers?.[key]}
+                            </p>
+                          </div>
+                        ))}
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    color="success"
+                    className="w-36 h-11"
+                    onClick={() => handleApprove(entry.id!, entry)}
                   >
-                    {entry.visitorsNames &&
-                      Object.keys(entry.visitorsNames).map((key) => (
-                        <div key={key} className="ml-4 mb-3">
-                          <p>
-                            <strong>Visitor Name:</strong> {entry.visitorsNames![key]}
-                          </p>
-                          <p>
-                            <strong>Visitor Email:</strong> {entry.visitorsEmails?.[key]}
-                          </p>
-                          <p>
-                            <strong>Visitor Number:</strong> {entry.visitorsNumbers?.[key]}
-                          </p>
-                        </div>
-                      ))}
-                  </AccordionItem>
-                </Accordion>
+                    Accept
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    color="warning"
+                    className="w-36 h-11"
+                    onClick={() => handleReject(entry.id!)}
+                  >
+                    Reject
+                  </Button>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  color="success"
-                  className="w-36 h-11"
-                  onClick={() => handleApprove(entry.id!, entry)}
-                >
-                  Accept
-                </Button>
-                <Button
-                  variant="ghost"
-                  color="warning"
-                  className="w-36 h-11"
-                  onClick={() => handleReject(entry.id!)}
-                >
-                  Reject
-                </Button>
-              </div>
+            </div>
+            <div >
+            <Image
+              src={`/visitorPhoto/${entry.email}.png`}
+              alt="Profile Photo"
+              width={300}
+              height={300}
+              className=''
+            />
             </div>
           </div>
         ))}
       </div>
-      <div className={isLoggedIn ?"hidden" : ""}>
-        
+      <div className={isLoggedIn ? "hidden" : ""}>
+
         <div>
           {allpendingApprovals.map((entry) => (
             <div key={entry.id} className="border-2 p-4 rounded shadow-sm m-2">
@@ -355,24 +368,13 @@ const Page = () => {
                     </AccordionItem>
                   </Accordion>
                 </div>
-                {/* <div className="flex gap-2">
-           <Button
-             variant="ghost"
-             color="success"
-             className="w-36 h-11"
-             onClick={() => handleApprove(entry.id!, entry)}
-           >
-             Accept
-           </Button>
-           <Button
-             variant="ghost"
-             color="warning"
-             className="w-36 h-11"
-             onClick={() => handleReject(entry.id!)}
-           >
-             Reject
-           </Button>
-         </div> */}
+                <Image
+              src={`/visitorPhoto/${entry.email}.png`}
+              alt="Profile Photo"
+              width={300}
+              height={300}
+              className=''
+            />
               </div>
             </div>
           ))}
