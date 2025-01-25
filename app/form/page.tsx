@@ -13,6 +13,7 @@ import { typeOfVisitors } from "@/data";
 import { departments } from "@/public/department.json";
 import { FaCamera } from "react-icons/fa";
 import { useRouter } from 'next/navigation'
+import VisitorPhotoSystem from '@/components/visitorPhoto';
 
 const Form = () => {
 
@@ -420,7 +421,7 @@ const Form = () => {
           </select>
 
 
-          <Button
+          {/* <Button
             className=" w-full text-xl mb-5 h-12"
             variant='ghost'
             color='secondary'
@@ -436,8 +437,9 @@ const Form = () => {
               ref={videoRef}
               style={{ width: '100%', maxWidth: '600px' }}
             />
-          </div>
+          </div> */}
 
+            <VisitorPhotoSystem email={email}/>
           <Button
             style={{ background: '#17C6ED' }}
             className="w-full text-white text-xl h-12"
