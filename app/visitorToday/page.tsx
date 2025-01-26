@@ -291,6 +291,11 @@ const Page = () => {
       const currentTypeCount = typeSnapshot.exists() ? typeSnapshot.val() : 0;
       await set(totalTypeOfVisitRef, currentTypeCount + 1);
 
+      // Update the totalDepartmentOfVisit
+      const totalDepartmentOfVisitRef = ref(db, `totalDepartmentOfVisit/${currentDate}/${entry.departmentOfWork}`);
+      const departmentSnapshot = await get(totalTypeOfVisitRef);
+      const currentdepartmentCount = departmentSnapshot.exists() ? departmentSnapshot.val() : 0;
+      await set(totalDepartmentOfVisitRef, currentdepartmentCount + 1);
 
 
       // Update the local state
@@ -306,7 +311,7 @@ const Page = () => {
     const period = hours >= 12 ? 'PM' : 'AM';
     const formattedHours = hours % 12 || 12; // Convert 0 or 12 to 12 for 12-hour format
     return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
-};
+  };
 
   return (
     <div>
