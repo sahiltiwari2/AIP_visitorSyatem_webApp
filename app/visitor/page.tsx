@@ -9,21 +9,25 @@ import { getDatabase, ref, query, orderByChild, equalTo, limitToLast, onValue } 
 import VisitorUpcomingCard from '@/components/visitorUpcomingCard';
 import VisitorCheckedCard from '@/components/visitorCheckedin';
 import { auth } from '@/firebase';
+import Image from 'next/image';
 
 const VisitorOverview = () => {
   type AppointmentEntry = {
     name: string;
     timeOfVist: string;
+    email: string;
   };
 
   type PendingApproval = {
     name: string;
     time: string;
+    email: string;
   };
 
   type CheckedInEntry = {
     name: string;
     checkedInTime: string; // Updated to use checkedInTime
+    email: string;
   };
 
   const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>([]);
@@ -51,6 +55,7 @@ const VisitorOverview = () => {
           const pendingList: PendingApproval[] = Object.values(data).map((entry) => ({
             name: entry.name,
             time: entry.timeOfVist,
+            email: entry.email
           }));
   
           setPendingApprovals(pendingList);
@@ -74,6 +79,7 @@ const VisitorOverview = () => {
           const checkedInList: CheckedInEntry[] = Object.values(data).map((entry) => ({
             name: entry.name,
             checkedInTime: entry.checkedInTime, // Use checkedInTime here
+            email: entry.email,
           }));
 
           setCheckedInEntries(checkedInList);
@@ -127,7 +133,7 @@ const VisitorOverview = () => {
           <div className="font-bold text-2xl">Checked In</div>
           <div className='flex flex-col justify-center items-center'>
             {checkedInEntries.map((entry, index) => (
-              <VisitorCheckedCard key={index} name={entry.name} time={entry.checkedInTime} />
+              <VisitorCheckedCard key={index} name={entry.name} time={entry.checkedInTime} email={entry.email}/>
             ))}
           </div>
         </div>
@@ -135,7 +141,7 @@ const VisitorOverview = () => {
           <div className="font-bold text-2xl">Scheduled Appointments</div>
           <div className='flex flex-col justify-center items-center'>
             {pendingApprovals.map((approval, index) => (
-              <VisitorUpcomingCard key={index} name={approval.name} time={approval.time} />
+              <VisitorUpcomingCard key={index} name={approval.name} time={approval.time} email={approval.email} />
             ))}
           </div>
         </div>

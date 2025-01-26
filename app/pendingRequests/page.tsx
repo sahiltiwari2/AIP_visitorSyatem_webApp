@@ -283,14 +283,14 @@ const Page = () => {
                 </div>
               </div>
             </div>
-            <div >
-            <Image
-              src={`/visitorPhoto/${entry.email}.png`}
-              alt="Profile Photo"
-              width={300}
-              height={300}
-              className=''
-            />
+            <div className='p-2'>
+              <Image
+                src={`/visitorPhoto/${entry.email}.png`}
+                alt="Profile Photo"
+                width={300}
+                height={300}
+                className=''
+              />
             </div>
           </div>
         ))}
@@ -368,13 +368,15 @@ const Page = () => {
                     </AccordionItem>
                   </Accordion>
                 </div>
-                <Image
-              src={`/visitorPhoto/${entry.email}.png`}
-              alt="Profile Photo"
-              width={300}
-              height={300}
-              className=''
-            />
+                <div className='p-2'>
+                  <Image
+                    src={`/visitorPhoto/${entry.email}.png`}
+                    alt="Profile Photo"
+                    width={300}
+                    height={300}
+                    className=''
+                  />
+                </div>
               </div>
             </div>
           ))}

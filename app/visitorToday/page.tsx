@@ -9,6 +9,7 @@ import VisitorCheckedCard from '@/components/visitorCheckedin';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import axios from 'axios';
 import { Input } from "@nextui-org/react";
+import Image from 'next/image';
 
 type AppointmentEntry = {
   batchNumber: any;
@@ -305,120 +306,15 @@ const Page = () => {
       <TopBar pageName="Today's Visitors" />
       <div className="mt-4 space-y-6 flex flex-col items-center w-screen">
         {appointments.map((entry, index) => (
-          <div key={entry.id || index} className="border-2 p-4 rounded shadow-sm">
-            <div className="text-2xl font-semibold">Name: {entry.name}</div>
-            <div className="flex gap-8 mt-5">
-              <div>
-                <span className="font-semibold">Email: </span>
-                {entry.email}
+          <div key={entry.id || index} className="flex border-2 p-4 rounded shadow-sm">
+            <div>
 
-              </div>
-              <div>
-                <span className="font-semibold">Phone Number: </span>
-                {entry.phonenumber}
-              </div>
-              <div>
-                <span className="font-semibold">Date of Visit: </span>
-                {entry.dateOfVisit}
-              </div>
-              <div>
-                <span className="font-semibold">Time of Visit: </span>
-                {entry.timeOfVisit}
-              </div>
-            </div>
-            <div className="flex gap-8 mt-3">
-              <div>
-                <span className="font-semibold">Number of Visitors: </span>
-                {entry.numberOfVisitors}
-              </div>
-              <div>
-                <span className="font-semibold">Representative Email: </span>
-                {entry.representativeEmail}
-              </div>
-              <div>
-                <span className="font-semibold">Department of Work: </span>
-                {entry.departmentOfWork}
-              </div>
-              <div>
-                <span className="font-semibold">Approval Status: </span>
-                {entry.approvalStatus}
-              </div>
-            </div>
-            <div className="mt-3">
-              <span className="font-semibold">Purpose of Visit: </span>
-              {entry.purposeOfVisit}
-            </div>
-            <div className="grid grid-cols-2 gap-4 items-center">
-              <div className="mt-2 border-2 w-[525px] rounded-lg shadow-sm">
-                <Accordion variant="shadow">
-                  <AccordionItem
-                    key="1"
-                    aria-label="Accordion 1"
-                    subtitle="Press to expand"
-                    title="Visitors Information:"
-                    className=" w-[500px]"
-                  >
-                    {entry.visitorsNames &&
-                      Object.keys(entry.visitorsNames).map((key) => (
-                        <div key={key} className="ml-4 mb-3">
-                          <p>
-                            <strong>Visitor Name:</strong> {entry.visitorsNames![key]}
-                          </p>
-                          <p>
-                            <strong>Visitor Email:</strong> {entry.visitorsEmails?.[key]}
-                          </p>
-                          <p>
-                            <strong>Visitor Number:</strong> {entry.visitorsNumbers?.[key]}
-                          </p>
-                        </div>
-                      ))}
-                  </AccordionItem>
-                </Accordion>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  color="success"
-                  className="w-36 h-11"
-                  onClick={() => handleApprove(entry.id!, entry)}
-                >
-                  Checked In
-                </Button>
-                <Input
-                  className="max-w-xs h-11"
-                  label="Enter Batch Number"
-                  type="number"
-                  variant="bordered"
-                  value={batchNumber}
-                  onChange={(e) => setBatchNumber(e.target.value)}
-                />
-
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className=" pt-5 ">
-        <div className="font-bold text-2xl mt-10 ml-10">Checked In Today</div>
-        {/* <div className='flex flex-col justify-center   ml-10'>
-          {checkedInEntries.map((entry, index) => (
-            <VisitorCheckedCard key={index} name={entry.name} time={entry.checkedInTime} />
-          ))}
-        </div> */}
-      </div>
-
-
-      {/* From Old code */}
-
-      <div className="flex flex-col items-center w-screen px-32 pt-10">
-        <div className='w-full  flex flex-col items-center space-y-6'>
-          {checkedInEntries.map((entry, index) => (
-            <div key={entry.id || index} className="border-2 p-4 rounded shadow-sm w-full">
               <div className="text-2xl font-semibold">Name: {entry.name}</div>
               <div className="flex gap-8 mt-5">
                 <div>
                   <span className="font-semibold">Email: </span>
                   {entry.email}
+
                 </div>
                 <div>
                   <span className="font-semibold">Phone Number: </span>
@@ -485,17 +381,144 @@ const Page = () => {
                 <div className="flex gap-2">
                   <Button
                     variant="ghost"
-                    color="warning"
+                    color="success"
                     className="w-36 h-11"
-                    onClick={() => handleCheckOut(entry.id!)}
+                    onClick={() => handleApprove(entry.id!, entry)}
                   >
-                    Checked Out
+                    Checked In
                   </Button>
+                  <Input
+                    className="max-w-xs h-11"
+                    label="Enter Batch Number"
+                    type="number"
+                    variant="bordered"
+                    value={batchNumber}
+                    onChange={(e) => setBatchNumber(e.target.value)}
+                  />
+
                 </div>
               </div>
             </div>
+            <div className='p-2'>
+              <Image
+                src={`/visitorPhoto/${entry.email}.png`}
+                alt="Profile Photo"
+                width={300}
+                height={300}
+                className=''
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className=" pt-5 ">
+        <div className="font-bold text-2xl mt-10 ml-10">Checked In Today</div>
+        {/* <div className='flex flex-col justify-center   ml-10'>
+          {checkedInEntries.map((entry, index) => (
+            <VisitorCheckedCard key={index} name={entry.name} time={entry.checkedInTime} />
           ))}
+        </div> */}
+      </div>
 
+
+      {/* From Old code */}
+
+      <div className="flex flex-col items-center w-screen px-32 pt-10">
+        <div className='w-full  flex flex-col items-center space-y-6'>
+          {checkedInEntries.map((entry, index) => (
+            <div key={entry.id || index} className=" flex border-2 p-4 rounded shadow-sm w-full">
+              <div>
+                <div className="text-2xl font-semibold">Name: {entry.name}</div>
+                <div className="flex gap-8 mt-5">
+                  <div>
+                    <span className="font-semibold">Email: </span>
+                    {entry.email}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Phone Number: </span>
+                    {entry.phonenumber}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Date of Visit: </span>
+                    {entry.dateOfVisit}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Time of Visit: </span>
+                    {entry.timeOfVisit}
+                  </div>
+                </div>
+                <div className="flex gap-8 mt-3">
+                  <div>
+                    <span className="font-semibold">Number of Visitors: </span>
+                    {entry.numberOfVisitors}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Representative Email: </span>
+                    {entry.representativeEmail}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Department of Work: </span>
+                    {entry.departmentOfWork}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Approval Status: </span>
+                    {entry.approvalStatus}
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <span className="font-semibold">Purpose of Visit: </span>
+                  {entry.purposeOfVisit}
+                </div>
+                <div className="grid grid-cols-2 gap-4 items-center">
+                  <div className="mt-2 border-2 w-[450px] rounded-lg shadow-sm">
+                    <Accordion variant="shadow">
+                      <AccordionItem
+                        key="1"
+                        aria-label="Accordion 1"
+                        subtitle="Press to expand"
+                        title="Visitors Information:"
+                        className=" w-[500px]"
+                      >
+                        {entry.visitorsNames &&
+                          Object.keys(entry.visitorsNames).map((key) => (
+                            <div key={key} className="ml-4 mb-3">
+                              <p>
+                                <strong>Visitor Name:</strong> {entry.visitorsNames![key]}
+                              </p>
+                              <p>
+                                <strong>Visitor Email:</strong> {entry.visitorsEmails?.[key]}
+                              </p>
+                              <p>
+                                <strong>Visitor Number:</strong> {entry.visitorsNumbers?.[key]}
+                              </p>
+                            </div>
+                          ))}
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      color="warning"
+                      className="w-36 h-11"
+                      onClick={() => handleCheckOut(entry.id!)}
+                    >
+                      Checked Out
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div className='p-2'>
+                <Image
+                  src={`/visitorPhoto/${entry.email}.png`}
+                  alt="Profile Photo"
+                  width={300}
+                  height={300}
+                  className=''
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

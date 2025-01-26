@@ -15,16 +15,20 @@ const DashboardPage = () => {
   type AppointmentEntry = {
     name: string;
     timeOfVist: string;
+    email:string;
   };
-
+  
+  
   type PendingApproval = {
     name: string;
     time: string;
+    email:string;
   };
-
+  
   type CheckedInEntry = {
     name: string;
     checkedInTime: string;
+    email:string;
   };
 
   const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>([]);
@@ -128,6 +132,7 @@ const DashboardPage = () => {
           const pendingList: PendingApproval[] = Object.values(data).map((entry) => ({
             name: entry.name,
             time: entry.timeOfVist,
+            email: entry.email,
           }));
 
           setPendingApprovals(pendingList);
@@ -151,6 +156,7 @@ const DashboardPage = () => {
           const checkedInList: CheckedInEntry[] = Object.values(data).map((entry) => ({
             name: entry.name,
             checkedInTime: entry.checkedInTime,
+            email: entry.email,
           }));
 
           setCheckedInEntries(checkedInList);
@@ -251,7 +257,7 @@ const DashboardPage = () => {
           <div className="flex flex-col items-center">
             {checkedInEntries.length > 0 ? (
               checkedInEntries.map((entry, index) => (
-                <VisitorCheckedCard key={index} name={entry.name} time={entry.checkedInTime} />
+                <VisitorCheckedCard key={index} name={entry.name} time={entry.checkedInTime} email={entry.email}/>
               ))
             ) : (
               <p>No checked-in visitors.</p>
@@ -263,7 +269,7 @@ const DashboardPage = () => {
           <div className="flex flex-col items-center">
             {pendingApprovals.length > 0 ? (
               pendingApprovals.map((approval, index) => (
-                <VisitorUpcomingCard key={index} name={approval.name} time={approval.time} />
+                <VisitorUpcomingCard key={index} name={approval.name} time={approval.time} email={approval.email}/>
               ))
             ) : (
               <p>No pending approvals.</p>

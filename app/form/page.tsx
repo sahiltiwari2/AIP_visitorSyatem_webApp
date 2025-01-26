@@ -34,11 +34,11 @@ const Form = () => {
           setIsCameraOn(true);
         }
       } else {
-        alert('Camera not supported in this browser.');
+        // alert('Camera not supported in this browser.');
       }
     } catch (err) {
       console.error('Error accessing the camera:', err);
-      alert('Unable to access the camera. Please check your permissions.');
+      // alert('Unable to access the camera. Please check your permissions.');
     }
   };
 
@@ -132,7 +132,7 @@ const Form = () => {
       number,
     });
 
-    alert('Person added successfully!');
+    // alert('Person added successfully!');
     setIsNewEntry(false); // Switch back to "existing entry" mode
   };
 
@@ -421,8 +421,6 @@ const Form = () => {
               </option>
             ))}
           </select>
-
-
           {/* <Button
             className=" w-full text-xl mb-5 h-12"
             variant='ghost'
