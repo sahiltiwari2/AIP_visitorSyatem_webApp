@@ -15,7 +15,7 @@ type AppointmentEntry = {
   batchNumber: any;
   id?: string;
   name: string;
-  timeOfVisit: string;
+  timeOfVist: string;
   typeOfVisit: string;
   email: string;
   phonenumber: number;
@@ -43,7 +43,7 @@ const Page = () => {
     id?: string;
     name: string;
     typeOfVisit: string;
-    timeOfVisit: string;
+    timeOfVist: string;
     email: string;
     phonenumber: number;
     dateOfVisit: string;
@@ -107,7 +107,7 @@ const Page = () => {
             name: entry.name,
             checkedInTime: entry.checkedInTime,
             id: entry.id,
-            timeOfVisit: entry.timeOfVisit,
+            timeOfVist: entry.timeOfVist,
             typeOfVisit: entry.typeOfVisit,
             email: entry.email,
             phonenumber: entry.phonenumber,
@@ -301,6 +301,13 @@ const Page = () => {
     }
   };
 
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12; // Convert 0 or 12 to 12 for 12-hour format
+    return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+};
+
   return (
     <div>
       <TopBar pageName="Today's Visitors" />
@@ -326,7 +333,7 @@ const Page = () => {
                 </div>
                 <div>
                   <span className="font-semibold">Time of Visit: </span>
-                  {entry.timeOfVisit}
+                  {formatTime(entry.timeOfVist)}
                 </div>
               </div>
               <div className="flex gap-8 mt-3">
@@ -444,7 +451,7 @@ const Page = () => {
                   </div>
                   <div>
                     <span className="font-semibold">Time of Visit: </span>
-                    {entry.timeOfVisit}
+                    {formatTime(entry.timeOfVist)}
                   </div>
                 </div>
                 <div className="flex gap-8 mt-3">

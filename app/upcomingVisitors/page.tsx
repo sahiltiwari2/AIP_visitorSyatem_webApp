@@ -127,34 +127,12 @@ const Page = () => {
     });
   }, [userDepartment]); // Add userDepartment as a dependency
 
-
-
-
-  const handleApprove = async (entryId: string, entry: AppointmentEntry) => {
-    const db = getDatabase();
-    try {
-      // Add entry to checkedIn with the current time
-      const approvedRef = ref(db, `checkedIn/${entryId}`);
-      await set(approvedRef, {
-        ...entry,
-        checkedInTime: new Date().toLocaleString('en-US', {
-          hour: 'numeric',
-          minute: 'numeric',
-          hour12: false,
-        }),
-      });
-
-      // Remove entry from approvedAppointments
-      const pendingRef = ref(db, `approvedAppointments/${entryId}`);
-      await remove(pendingRef);
-
-      // Update the local state
-      setAppointments((prev) => prev.filter((item) => item.id !== entryId));
-    } catch (error) {
-      console.error('Error approving appointment:', error);
-    }
-  };
-
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12; // Convert 0 or 12 to 12 for 12-hour format
+    return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+};
   return (
     <div>
       <TopBar pageName="Future Visitors" />
@@ -178,7 +156,7 @@ const Page = () => {
                 </div>
                 <div>
                   <span className="font-semibold">Time of Visit: </span>
-                  {entry.timeOfVisit}
+                  {formatTime(entry.timeOfVisit)}
                 </div>
               </div>
               <div className="flex gap-8 mt-3">

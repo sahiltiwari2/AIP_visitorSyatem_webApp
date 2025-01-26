@@ -187,6 +187,13 @@ const Page = () => {
     }
   }
 
+const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12; // Convert 0 or 12 to 12 for 12-hour format
+    return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+};
+
   return (
     <div>
       <TopBar pageName="Pending Approvals" />
@@ -211,7 +218,7 @@ const Page = () => {
                 </div>
                 <div>
                   <span className="font-semibold">Time of Visit: </span>
-                  {entry.timeOfVist}
+                  {formatTime(entry.timeOfVist)}
                 </div>
               </div>
               <div className="flex gap-8 mt-3 w-fit">
@@ -316,7 +323,7 @@ const Page = () => {
                 </div>
                 <div>
                   <span className="font-semibold">Time of Visit: </span>
-                  {entry.timeOfVist}
+                  {formatTime(entry.timeOfVist)}
                 </div>
               </div>
               <div className="flex gap-8 mt-3">
