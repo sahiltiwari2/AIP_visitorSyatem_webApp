@@ -11,7 +11,7 @@ import Image from 'next/image';
 type AppointmentEntry = {
   id?: string;
   name: string;
-  timeOfVisit: string;
+  timeOfVist: string;
   email: string;
   phonenumber: number;
   dateOfVisit: string;
@@ -156,7 +156,7 @@ const Page = () => {
                 </div>
                 <div>
                   <span className="font-semibold">Time of Visit: </span>
-                  {formatTime(entry.timeOfVisit)}
+                  {formatTime(entry.timeOfVist)}
                 </div>
               </div>
               <div className="flex gap-8 mt-3">

@@ -17,8 +17,8 @@ const VisitorUpcomingCard = (props: { email: any; name: string | number | bigint
                 <Image
                     src={`/visitorPhoto/${props.email}.png`}
                     alt="Profile Photo"
-                    width={300}
-                    height={300}
+                    width={50}
+                    height={50}
                     className=''
                 />
             </div>
