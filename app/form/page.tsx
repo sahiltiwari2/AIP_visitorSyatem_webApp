@@ -200,8 +200,10 @@ const Form = () => {
       visitorEmails,
       visitorNumbers,
       representativeEmail,
-      department
+      selectedDepartment
     };
+
+    console.log("Form Data:", formData);
 
     try {
       const response = await fetch('/api/sendEmail', {

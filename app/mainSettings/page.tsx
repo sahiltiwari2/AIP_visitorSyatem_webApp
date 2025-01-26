@@ -23,7 +23,7 @@ const Page = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [currentMasterEmail, setCurrentMasterEmail] = useState('');
   const [currentHrEmail, setCurrentHrEmail] = useState('');
-  const [newMasterEmail, setNewMasterEmail] = useState('');
+  const [emailInput, setEmailInput] = useState('');
   const [newDepartmentEmail, setNewDepartmentEmail] = useState('');
   const [isEditingMasterEmail, setIsEditingMasterEmail] = useState(false);
   const [isEditingDepartmentEmail, setIsEditingDepartmentEmail] = useState(false);
@@ -41,6 +41,7 @@ const Page = () => {
   const [newDepartment, setNewDepartment] = useState("");
   const [deleteDepartment, setDeleteDepartment] = useState("");
   const [departments, setDepartments] = useState([]); // State to store department names
+  const [admins, setAdmins] = useState([]);
 
   // Function to reset password for the user 
   const resetPass = async () => {
@@ -168,6 +169,30 @@ const Page = () => {
     fetchAccounts();
   }, []);
   // API code ends here
+
+  const handleReplaceAdmin = async () => {
+    if (!emailInput) {
+      // setMessage("Please enter an email.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/updateAdmins", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newAdmin: emailInput }),
+      });
+
+      if (response.ok) {
+        // setMessage("Admin replaced successfully!");
+      } else {
+        throw new Error("Failed to replace admin");
+      }
+    } catch (error) {
+      console.error(error);
+      // setMessage("Error replacing admin.");
+    }
+  };
 
 
   useEffect(() => {
@@ -304,13 +329,13 @@ const Page = () => {
 
   // Handle master email change
   const handleMasterEmailChange = async () => {
-    if (!newMasterEmail) return;
+    if (!emailInput) return;
 
     const emailRef = ref(database, 'departments/masterEmail/email');
     try {
-      await set(emailRef, newMasterEmail);
-      setCurrentMasterEmail(newMasterEmail);
-      setNewMasterEmail('');
+      await set(emailRef, emailInput);
+      setCurrentMasterEmail(emailInput);
+      setEmailInput('');
       setIsEditingMasterEmail(false);
       toast.success('Master Email Changed Successfully');
     } catch (error) {
@@ -370,15 +395,15 @@ const Page = () => {
               <IoMail />
               <span>Master Verification Email</span>
             </div>
-            <span className='text-gray-600 ml-6'>{currentMasterEmail}</span>
+            <span className='text-gray-600 ml-6'>{admin}</span>
           </div>
           {isEditingMasterEmail ? (
             <div className='flex items-center gap-2'>
               <input
                 type="email"
                 placeholder="Enter new master email"
-                value={newMasterEmail}
-                onChange={(e) => setNewMasterEmail(e.target.value)}
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
                 className='border-2 px-2 py-2 rounded-lg'
               />
               <Button onClick={handleMasterEmailChange} variant='ghost' color='primary'>Save</Button>

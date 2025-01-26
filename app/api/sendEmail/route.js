@@ -14,48 +14,53 @@ export async function POST(req) {
     visitorEmails,
     visitorNumbers,
     representativeEmail,
-    department,
+    selectedDepartment,
     TimeofMeeting
   } = await req.json();
 
-  // Fetch emails from Firebase
-  const fetchEmailsFromFirebase = async () => {
+  if (!selectedDepartment || typeof selectedDepartment !== "string" || selectedDepartment.trim() === "") {
+    console.error("Invalid department received:", selectedDepartment);
+    return new Response(JSON.stringify({ message: 'Invalid department provided' }), { status: 400 });
+  }
+
+  const fetchEmailFromFirebase = async (department) => {
     const dbRef = ref(database);
     try {
-      console.log("Fetching emails from Firebase...");
-      const [masterEmailSnap, hrEmailSnap, devEmailSnap] = await Promise.all([
-        get(child(dbRef, 'departments/masterEmail/email')),
-        get(child(dbRef, 'departments/hr/email')),
-        get(child(dbRef, 'departments/development/email'))
-      ]);
-
-      console.log("Firebase fetch complete.");  
-      return {
-        masterEmail: masterEmailSnap.exists() ? masterEmailSnap.val() : null,
-        hrEmail: hrEmailSnap.exists() ? hrEmailSnap.val() : null,
-        developmentEmail: devEmailSnap.exists() ? devEmailSnap.val() : null,
-      };
+      console.log(`Fetching email for department '${department}' from Firebase...`);
+      const emailSnap = await get(child(dbRef, `departments/${department}/email`));
+      if (!emailSnap.exists()) {
+        throw new Error(`Email for department '${department}' not found`);
+      }
+      return emailSnap.val();
     } catch (error) {
-      console.error('Error fetching emails from Firebase:', error);
-      throw new Error('Failed to fetch emails from Firebase');
+      console.error(`Error fetching email for department '${department}':`, error);
+      throw new Error(`Failed to fetch email for department '${department}'`);
+    }
+  };
+  const fetchMasterEmailFromFirebase = async () => {
+    const dbRef = ref(database);
+    try {
+      console.log(`Fetching Masrter email from Firebase...`);
+      const emailSnap = await get(child(dbRef, `departments/masterEmail/email`));
+      if (!emailSnap.exists()) {
+        throw new Error(`Email for department '${department}' not found`);
+      }
+      return emailSnap.val();
+    } catch (error) {
+      console.error(`Error fetching email for department '${department}':`, error);
+      throw new Error(`Failed to fetch email for department '${department}'`);
     }
   };
 
-  // Retrieve emails
-  let emails;
+  let departmentEmail;
+  let masterEmail;
   try {
-    emails = await fetchEmailsFromFirebase();
-    console.log("Fetched Emails:", emails); // Debug Firebase values
+    departmentEmail = await fetchEmailFromFirebase(selectedDepartment);
+    masterEmail = await fetchMasterEmailFromFirebase();
+    console.log(`Fetched department email: ${departmentEmail}`);
   } catch (error) {
     console.error("Error during Firebase fetch:", error);
     return new Response(JSON.stringify({ message: error.message }), { status: 500 });
-  }
-
-  const { masterEmail, hrEmail, developmentEmail } = emails;
-
-  if (!masterEmail) {
-    console.error("Master email is not configured!");
-    return new Response(JSON.stringify({ message: 'Master email is not configured' }), { status: 500 });
   }
 
   // Configure nodemailer
@@ -67,7 +72,6 @@ export async function POST(req) {
     },
   });
 
-  // Prepare email text
   const emailText = `
     Full Name: ${name}
     Email: ${email}
@@ -82,35 +86,24 @@ export async function POST(req) {
     Representative Email: ${representativeEmail}
   `;
 
-  // Send email to the department-specific email and master email
-  const recipients = [];
-  if (department === "hr") {
-    recipients.push(hrEmail);
-  } else if (department === "development") {
-    recipients.push(developmentEmail);
-  }
-  recipients.push(masterEmail); // Always send to master email
-
-  // Log recipient emails
-  console.log("Recipient Emails:", recipients);
+  const recipients = [departmentEmail, masterEmail]; 
 
   try {
-    // Send emails to all recipients
     await Promise.all(
       recipients.map((recipient) =>
         transporter.sendMail({
           from: 'sahiltiwari2005@gmail.com',
           to: recipient,
-          subject: `New Appointment Request for ${department.toUpperCase()} Department`,
+          subject: `New Appointment Request for ${selectedDepartment.toUpperCase()} Department`, // Fixed: Use selectedDepartment
           text: emailText,
         })
       )
     );
-
     console.log("Emails sent successfully to:", recipients);
     return new Response(JSON.stringify({ message: 'Emails sent successfully' }), { status: 200 });
   } catch (error) {
     console.error('Error sending emails:', error);
     return new Response(JSON.stringify({ message: 'Failed to send emails' }), { status: 500 });
   }
+  
 }
