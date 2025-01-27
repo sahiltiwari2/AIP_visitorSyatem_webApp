@@ -216,7 +216,7 @@ const Page = () => {
                   alt="Profile Photo"
                   width={300}
                   height={300}
-                  className=''
+                  className='rounded-full'
                 />
               </div>
           </div>

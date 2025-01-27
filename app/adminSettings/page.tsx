@@ -125,6 +125,7 @@ const Page = () => {
                             alt="Profile Photo"
                             width={150}
                             height={150}
+                            className='rounded-full'
                             onError={(e) => (setIsPhotoPresent(false))} // Default image if photo not found
                         />
                     )}
