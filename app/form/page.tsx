@@ -77,6 +77,7 @@ const Form = () => {
   const [departments, setDepartments] = useState([]); // State to store department names
   const [selectedDepartment, setSelectedDepartment] = useState(''); // State for the selected department
   const [isNewEntry, setIsNewEntry] = useState(false);
+  const [currentDate, setCurrentDate] = useState<string>('');
 
   useEffect(() => {
     // Fetch the departments from the JSON file
@@ -84,9 +85,10 @@ const Form = () => {
       .then((response) => response.json())
       .then((data) => setDepartments(data.departments || []))
       .catch((error) => console.error('Error fetching departments:', error));
+
   }, []);
 
-// Fetch data if the email exists in the database
+  // Fetch data if the email exists in the database
   const fetchOrInitializePerson = async (email: string) => {
     if (!email) return;
 
@@ -186,7 +188,9 @@ const Form = () => {
     setVisitorNames(updatedVisitorNames);
   };
 
+
   const handleSubmit = async () => {
+    incrementFutureVisitorCount(date);
     setIsLoading(true);
     const formData = {
       name,
@@ -264,6 +268,29 @@ const Form = () => {
     }
   };
 
+  const incrementFutureVisitorCount = async (date: string): Promise<void> => {
+    try {
+      const db = getDatabase();
+      const today = new Date();
+      const currentDate = today.toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+  
+      if (date > currentDate) {
+        // Reference for the upcoming visitor count on the given future date
+        const futureVisitorsRef = ref(db, `upComingVisitors/${date}`);
+        
+        // Fetch the current count from Firebase
+        const snapshot = await get(futureVisitorsRef);
+        const currentCount = snapshot.exists() ? snapshot.val() : 0;
+        
+        // Increment the count by 1 and update in Firebase
+        await set(futureVisitorsRef, currentCount + 1);
+      } else {
+        console.log("The provided date is not in the future.");
+      }
+    } catch (error) {
+      console.error("Error incrementing future visitor count:", error);
+    }
+  };
   return (
     <div>
       <TopBar pageName="Appointment Form" />
@@ -439,7 +466,7 @@ const Form = () => {
             />
           </div> */}
 
-            <VisitorPhotoSystem email={email}/>
+          <VisitorPhotoSystem email={email} />
           <Button
             style={{ background: '#17C6ED' }}
             className="w-full text-white text-xl h-12"
@@ -462,6 +489,7 @@ const Form = () => {
             >
               Cancel
             </Button>
+            
           </div>
         </div>
       </div>

@@ -191,7 +191,7 @@ const Page = () => {
         minute: 'numeric',
         hour12: false,
       });
-
+      
       const checkedInRef = ref(db, `checkedIn/${entryId}`);
       const snapshot = await get(checkedInRef);
 
@@ -203,7 +203,9 @@ const Page = () => {
         await set(checkedOutRef, {
           ...entry,
           checkedOutTime: formattedTime, // Add checkout time
+          batchNumber: batchNumber,
         });
+
 
         const data = {
           id: entryId,
@@ -213,6 +215,7 @@ const Page = () => {
           typeOfVisit: entry.typeOfVisit,
           phonenumber: entry.phonenumber,
           dateOfVisit: entry.dateOfVisit,
+
           purposeOfVisit: entry.purposeOfVisit,
           numberOfVisitors: entry.numberOfVisitors,
           visitorsNames: entry.visitorsNames,
@@ -224,7 +227,30 @@ const Page = () => {
           checkedOutTime: formattedTime,
         }
 
-        axios.post('https://api.sheetbest.com/sheets/e7e0a471-b4af-46cb-97bf-fa244cdc69c1', data).then((response) => {
+        let newTime = formatTime(entry.timeOfVist);
+        let newCheckedTime = formatTime(formattedTime);
+
+        const sheetData = {
+          name: entry.name,
+          timeOfVisit: newTime,
+          email: entry.email,
+          typeOfVisit: entry.typeOfVisit,
+          phonenumber: entry.phonenumber,
+          dateOfVisit: entry.dateOfVisit,
+          purposeOfVisit: entry.purposeOfVisit,
+          batchNumber: batchNumber,
+          numberOfVisitors: entry.numberOfVisitors,
+          visitorsNames: entry.visitorsNames,
+          visitorsEmails: entry.visitorsEmails,
+          visitorsNumbers: entry.visitorsNumbers,
+          representativeEmail: entry.representativeEmail,
+          departmentOfWork: entry.departmentOfWork,
+          checkedOutTime: newCheckedTime,
+        }
+
+
+
+        axios.post('https://api.sheetbest.com/sheets/d84ba32d-7b25-4734-8e1a-c90f237aefd3', sheetData).then((response) => {
           console.log(response);
         })
 
@@ -232,7 +258,6 @@ const Page = () => {
         // Remove the entry from the `checkedIn` section
         await remove(checkedInRef);
 
-        console.log(`Checked out and moved to checkedOut section at ${formattedTime}`);
 
         // Update local state to remove the checked-out entry
         setCheckedInEntries((prevEntries) =>

@@ -237,7 +237,7 @@ const DashboardPage = () => {
             Pre Registered Visitors
           </div>
           <div className='pl-3 pt-7'>
-            <PreRegisterVisitorChar />
+            <PreRegisterVisitorChar timeFrame={TimeFrame} />
           </div>
         </div>
         <div className='w-[1100px] border-2 shadow-md  rounded-md m-3 relative flex flex-row justify-center items-centers'>
@@ -245,7 +245,7 @@ const DashboardPage = () => {
             Visitors Per Department
           </div>
           <div className='pl-3 pt-7'>
-            <VisitorsPerDepartment />
+            <VisitorsPerDepartment timeFrame={TimeFrame} />
           </div>
         </div>
       </div>
