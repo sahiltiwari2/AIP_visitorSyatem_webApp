@@ -234,7 +234,7 @@ const DashboardPage = () => {
         </div>
         <div className='w-[1100px] border-2 shadow-md p-3 rounded-md  relative flex flex-row justify-center items-centers'>
           <div className=' absolute bg-pink-300 h-14 w-full flex items-center justify-center font-bold text-2xl text-gray-50 shadow-sm'>
-            Pre Registered Visitors
+            Up-Coming Visitors
           </div>
           <div className='pl-3 pt-7'>
             <PreRegisterVisitorChar timeFrame={TimeFrame} />

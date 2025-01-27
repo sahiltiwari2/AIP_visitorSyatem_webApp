@@ -620,7 +620,7 @@ const Page = () => {
           </div>
           <span className='text-xl'>Go To DataBase</span>
         </div>
-        <Link href="https://docs.google.com/spreadsheets/d/1QfiLb5tb3dY2G9cIZgdJF4AeYbI4uEujnzNqKR-Hz3E/edit?usp=sharing">
+        <Link href="https://docs.google.com/spreadsheets/d/1WxGaDWAdcYjWhLY1hR_2alrH5pmX5_tCzFgYv-_ln2A/edit?gid=0#gid=0">
           <Button className='ml-auto' variant='ghost'>{"->"}</Button>
         </Link>
       </div>
