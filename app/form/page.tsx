@@ -154,12 +154,26 @@ const Form = () => {
     // Format the corrected time
     const adjustedTime = `${String(hours).padStart(2, "0")}:${String(adjustedMinutes).padStart(2, "0")}`;
 
-    // Ensure the time is within working hours (optional)
-    // if (adjustedTime < "09:00" || adjustedTime > "18:00") {
-    //   alert("Please select a time within working hours (9:00 AM to 6:00 PM).");
-    //   return;
-    // }
 
+    const currentTime = new Date();
+    const currentHours = String(currentTime.getHours()).padStart(2, "0");
+    const currentMinutes = String(currentTime.getMinutes()).padStart(2, "0");
+    const formattedCurrentTime = `${currentHours}:${currentMinutes}`;
+
+    // Check if the adjusted time is outside working hours or in the past
+    if (adjustedTime < formattedCurrentTime) {
+      toast.error('Please select a time in Future!', {
+        position: 'top-left',
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'dark',
+      });
+      return;
+    }
     setTimeofMeeting(adjustedTime);
   };
 
@@ -273,15 +287,15 @@ const Form = () => {
       const db = getDatabase();
       const today = new Date();
       const currentDate = today.toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
-  
+
       if (date > currentDate) {
         // Reference for the upcoming visitor count on the given future date
         const futureVisitorsRef = ref(db, `upComingVisitors/${date}`);
-        
+
         // Fetch the current count from Firebase
         const snapshot = await get(futureVisitorsRef);
         const currentCount = snapshot.exists() ? snapshot.val() : 0;
-        
+
         // Increment the count by 1 and update in Firebase
         await set(futureVisitorsRef, currentCount + 1);
       } else {
@@ -489,7 +503,7 @@ const Form = () => {
             >
               Cancel
             </Button>
-            
+
           </div>
         </div>
       </div>
