@@ -217,7 +217,6 @@ const Page = () => {
           typeOfVisit: entry.typeOfVisit,
           phonenumber: entry.phonenumber,
           dateOfVisit: entry.dateOfVisit,
-
           purposeOfVisit: entry.purposeOfVisit,
           numberOfVisitors: entry.numberOfVisitors,
           visitorsNames: entry.visitorsNames,
@@ -240,7 +239,7 @@ const Page = () => {
           phonenumber: entry.phonenumber,
           dateOfVisit: entry.dateOfVisit,
           purposeOfVisit: entry.purposeOfVisit,
-          batchNumber: batchNumber,
+          badgeNumber: batchNumber,
           numberOfVisitors: entry.numberOfVisitors,
           visitorsNames: entry.visitorsNames,
           visitorsEmails: entry.visitorsEmails,
@@ -428,7 +427,7 @@ const Page = () => {
                   </Button>
                   <Input
                     className="max-w-xs h-11"
-                    label="Enter Batch Number"
+                    label="Enter Badge Number"
                     type="number"
                     variant="bordered"
                     value={batchNumber}

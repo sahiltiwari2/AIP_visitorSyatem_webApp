@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type VisitorPhotoSystemProps = {
   email: string;
@@ -9,26 +9,32 @@ type VisitorPhotoSystemProps = {
 export default function VisitorPhotoSystem({ email }: VisitorPhotoSystemProps) {
   const [image, setImage] = useState<string | null>(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const openCamera = () => {
     setIsCameraOpen(true);
   };
 
-  const captureImage = async (videoRef: HTMLVideoElement | null) => {
-    if (videoRef) {
+  const closeCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach((track) => track.stop());
+    }
+    setIsCameraOpen(false);
+  };
+
+  const captureImage = async () => {
+    if (videoRef.current) {
       const canvas = document.createElement("canvas");
-      canvas.width = videoRef.videoWidth;
-      canvas.height = videoRef.videoHeight;
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        ctx.drawImage(videoRef, 0, 0, canvas.width, canvas.height);
-      } else {
-        console.error("Failed to get 2D context");
+        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
       }
       const imageData = canvas.toDataURL("image/png");
       setImage(imageData);
 
-      // Save image to public folder
       const response = await fetch("/api/save-image", {
         method: "POST",
         headers: {
@@ -41,17 +47,37 @@ export default function VisitorPhotoSystem({ email }: VisitorPhotoSystemProps) {
       });
 
       if (response.ok) {
-        alert("Image saved successfully!"); // Toast here
+        alert("Image saved successfully!");
       } else {
         alert("Failed to save image.");
       }
 
-      setIsCameraOpen(false);
+      closeCamera();
     }
   };
 
+  useEffect(() => {
+    if (isCameraOpen && videoRef.current) {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Your browser does not support camera access.");
+        closeCamera();
+        return;
+      }
+
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          videoRef.current!.srcObject = stream;
+        })
+        .catch((error) => {
+          console.error("Error accessing the camera:", error);
+          closeCamera();
+        });
+    }
+  }, [isCameraOpen]);
+
   return (
-    <div className="flex flex-col items-center justify-center  space-y-4">
+    <div className="flex flex-col items-center justify-center space-y-4">
       <button
         onClick={openCamera}
         className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 w-full h-12 text-xl mb-5"
@@ -64,23 +90,23 @@ export default function VisitorPhotoSystem({ email }: VisitorPhotoSystemProps) {
           <video
             autoPlay
             playsInline
-            ref={(videoRef) => {
-              if (videoRef) {
-                navigator.mediaDevices
-                  .getUserMedia({ video: true })
-                  .then((stream) => {
-                    videoRef.srcObject = stream;
-                  });
-              }
-            }}
+            ref={videoRef}
             className="w-100 h-80 border rounded-lg"
           ></video>
-          <button
-            onClick={() => captureImage(document.querySelector("video"))}
-            className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 w-full h-12 text-xl mb-5"
-          >
-            Capture Image
-          </button>
+          <div className="flex space-x-4">
+            <button
+              onClick={captureImage}
+              className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 w-full h-12 text-xl"
+            >
+              Capture Image
+            </button>
+            <button
+              onClick={closeCamera}
+              className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 w-full h-12 text-xl"
+            >
+              Close Camera
+            </button>
+          </div>
         </div>
       )}
 
