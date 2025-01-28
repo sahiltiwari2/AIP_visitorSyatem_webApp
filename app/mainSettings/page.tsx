@@ -93,7 +93,9 @@ const Page = () => {
     }
     addAccount();
     const db = getDatabase();
-    set(ref(db, 'users/' + newEmail.split('@')[0]), {
+    const firstMailName = newEmail.split('@')[0];
+    const finalName = firstMailName.replace(/\./, ">");
+    set(ref(db, 'users/' + finalName), {
       username: newEmail.split('@')[0],
       email: newEmail,
       department: selectedDepartment

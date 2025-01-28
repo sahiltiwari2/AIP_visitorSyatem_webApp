@@ -66,26 +66,6 @@ const login = () => {
       });
     }
   }
-  const handleGoogleSignIn = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      // Save user data to the database
-      await set(ref(database, 'users/' + user.uid), {
-        username: user.displayName,
-        email: user.email,
-      });
-
-      toast.success('Logged in with Google!', { position: "top-left", theme: "dark" });
-      // setTimeout(() => {
-      //   router.push('/adminSettings');
-      // }, 2000);
-    } catch (error) {
-
-    }
-  }
-
   return (
     <div>
       <TopBar pageName='Login' />

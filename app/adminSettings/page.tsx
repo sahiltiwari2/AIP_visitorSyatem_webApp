@@ -75,7 +75,8 @@ const Page = () => {
     useEffect(() => {
         if (email) {
 
-            const userKey = email.split('@')[0];
+            const firstMailName = email.split('@')[0];
+            const userKey = firstMailName.replace(/\./, ">");
 
             get(child(dbRef, `users/${userKey}/username`))
                 .then((snapshot) => {
@@ -95,7 +96,8 @@ const Page = () => {
 
     const handleSave = (field: 'username' | 'email' | 'number', value: string) => {
         if (email) {
-            const userKey = email.split('@')[0];
+            const firstMailName = email.split('@')[0];
+            const userKey = firstMailName.replace(/\./, ">");
             const fieldPath = `users/${userKey}/${field}`;
 
             set(ref(getDatabase(), fieldPath), value)
