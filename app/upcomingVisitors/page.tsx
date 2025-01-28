@@ -49,7 +49,9 @@ const Page = () => {
     updateCurrentDate();
   }, []);
   if (email) {
-    get(child(dbRef, `users/${email.split("@")[0]}/department`))
+    const firstMailName = email.split('@')[0];
+    const FinalName = firstMailName.replace(/\./, ">");
+    get(child(dbRef, `users/${FinalName}/department`))
       .then((snapshot) => {
         if (snapshot.exists()) {
           setUserDepartment(snapshot.val());

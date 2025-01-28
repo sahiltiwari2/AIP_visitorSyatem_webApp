@@ -324,7 +324,7 @@ const Form = () => {
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
-              fetchOrInitializePerson(e.target.value); // Trigger search on email change
+              fetchOrInitializePerson(e.target.value);
             }}
           />
           <Input

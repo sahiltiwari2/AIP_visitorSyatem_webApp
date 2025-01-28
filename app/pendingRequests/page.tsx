@@ -97,8 +97,10 @@ const Page = () => {
     if (!email) return;
 
     const fetchDepartment = () => {
+      const firstMailName = email.split('@')[0];
+      const FinalName = firstMailName.replace(/\./, ">");
       const db = getDatabase();
-      const departmentRef = ref(db, `users/${email.split('@')[0]}/department`);
+      const departmentRef = ref(db, `users/${FinalName}/department`);
       onValue(departmentRef, (snapshot) => {
         setDepartment(snapshot.val() || '');
       });
@@ -187,12 +189,12 @@ const Page = () => {
     }
   }
 
-const formatTime = (time: string) => {
+  const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
     const period = hours >= 12 ? 'PM' : 'AM';
     const formattedHours = hours % 12 || 12; // Convert 0 or 12 to 12 for 12-hour format
     return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
-};
+  };
 
   return (
     <div>

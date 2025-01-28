@@ -67,7 +67,9 @@ const Page = () => {
       }
     });
     const db = getDatabase();
-    const starCountRef = ref(db, 'users/' + userEmail.split("@")[0] + '/department');
+    const firstMailName = userEmail.split('@')[0];
+    const FinalName = firstMailName.replace(/\./, ">");
+    const starCountRef = ref(db, 'users/' + FinalName + '/department');
     onValue(starCountRef, (snapshot) => {
       setUserDepartment(snapshot.val());
     });
