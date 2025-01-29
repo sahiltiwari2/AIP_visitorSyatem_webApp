@@ -204,6 +204,20 @@ const Form = () => {
 
 
   const handleSubmit = async () => {
+    if (name == "" || email == "" || number == "" || date == "" || purpose == "" || TimeofMeeting == "" || selectedDepartment == "") {
+      toast.warning('Please fill all the fields before submitting', {
+        position: 'top-left',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'dark'
+      })
+      return;
+    }
+
     incrementFutureVisitorCount(date);
     setIsLoading(true);
     const formData = {
