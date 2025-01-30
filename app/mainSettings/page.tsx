@@ -102,6 +102,8 @@ const Page = () => {
     });
   }
 
+
+
   //  This code is for api that adds and removes emails from email.json in public folder
   const fetchAccounts = async () => {
     const response = await fetch("/email.json");
@@ -284,10 +286,13 @@ const Page = () => {
   useEffect(() => {
     const dbRef = ref(database);
 
+
     // Fetch user details
     const fetchUserDetails = async (userEmail: string) => {
       try {
-        const usernameSnapshot = await get(child(dbRef, `users/${userEmail.split("@")[0]}/username`));
+        const firstMailName = email.split('@')[0];
+        const userKey = firstMailName.replace(/\./, ">");
+        const usernameSnapshot = await get(child(dbRef, `users/${userKey}/username`));
         if (usernameSnapshot.exists()) {
           setUsername(usernameSnapshot.val());
         } else {
@@ -370,8 +375,19 @@ const Page = () => {
       setAdmin(false);
     }
 
-  }, [email])
+    const dbRef = ref(getDatabase());
+    const firstMailName = email.split('@')[0];
+    const FinalName = firstMailName.replace(/\./, ">");
+    get(child(dbRef, `users/${FinalName}/username`))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          setUsername(snapshot.val());
+        } else {
+          console.log("No user data available");
+        }
+      })
 
+  }, [email])
 
 
   return (
@@ -383,7 +399,7 @@ const Page = () => {
           <div className='flex flex-row gap-4 text-2xl'>
             <FaPencilAlt />
             <span className='text-xl'>Admin:</span>
-            <span className='text-xl'>{username || "Loading..."}</span>
+            <span className='text-xl'>{username}</span>
           </div>
           <Button className='ml-auto w-32' variant='ghost' as={Link} href='/adminSettings'>Manage</Button>
         </div>

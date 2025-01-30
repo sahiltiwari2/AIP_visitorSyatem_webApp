@@ -32,7 +32,7 @@ export default function Home() {
             position: 'relative',
             width: '50vw',
             height: '40vh',
-            overflow: 'hidden', // Prevent overflow outside the container
+            overflow: 'hidden', 
           }}
         >
           <video
