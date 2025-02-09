@@ -26,7 +26,7 @@ export default function Home() {
         clients like TVS and Greaves, while beginning exports to Italy. The manufacturing facilities have been upgraded multiple times since
         1995 to meet international standards, and now nearly 50% of their output is exported to 35 countries.
       </div>
-      <div className="w-full h-[350px] flex items-center justify-center text-3xl font-extrabold mt-12 mb-12">
+      <div className="w-full lg:h-[350px] md:h-[400px] flex items-center justify-center text-3xl font-extrabold mt-12 mb-12">
         <div
           style={{
             position: 'relative',

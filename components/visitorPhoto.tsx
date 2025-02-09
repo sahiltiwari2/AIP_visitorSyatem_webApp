@@ -77,7 +77,7 @@ export default function VisitorPhotoSystem({ email }: VisitorPhotoSystemProps) {
   }, [isCameraOpen]);
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-4">
+    <div className="flex flex-col items-center justify-center space-y-4 mb-5">
       <button
         onClick={openCamera}
         className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 w-full h-12 text-xl mb-5"
@@ -93,10 +93,10 @@ export default function VisitorPhotoSystem({ email }: VisitorPhotoSystemProps) {
             ref={videoRef}
             className="w-100 h-80 border rounded-lg"
           ></video>
-          <div className="flex space-x-4">
+          <div className="flex  w-full gap-2">
             <button
               onClick={captureImage}
-              className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 w-full h-12 text-xl"
+              className="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 w-full h-12 text-xl "
             >
               Capture Image
             </button>
