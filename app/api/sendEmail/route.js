@@ -68,7 +68,7 @@ export async function POST(req) {
     service: 'Gmail',
     auth: {
       user: 'sahiltiwari2005@gmail.com',
-      pass: 'wcyc uafc bshq ltvv', // Use app password for Gmail
+      pass: 'rdmv kwlb cqdj sjdm', // Use app password for Gmail
     },
   });
 
