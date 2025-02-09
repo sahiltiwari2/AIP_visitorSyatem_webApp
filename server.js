@@ -8,7 +8,6 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-// Path to your SSL certificate and key
 const options = {
   key: fs.readFileSync(path.join(__dirname, 'key.pem')),
   cert: fs.readFileSync(path.join(__dirname, 'cert.pem')),
@@ -17,14 +16,15 @@ const options = {
 app.prepare().then(() => {
   const server = express();
 
-  // Handle all requests with Next.js
   server.all('*', (req, res) => {
     return handle(req, res);
   });
 
-  // Start the HTTPS server
-  https.createServer(options, server).listen(3000, (err) => {
+  const HOST = '192.168.29.187'; 
+  const PORT = 3000;
+
+  https.createServer(options, server).listen(PORT, HOST, (err) => {
     if (err) throw err;
-    console.log('> Ready on https://localhost:3000');
+    console.log(`> Ready on https://192.168.29.187:${PORT}`);  
   });
 });
