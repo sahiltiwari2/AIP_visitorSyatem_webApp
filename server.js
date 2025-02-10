@@ -20,11 +20,11 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  const HOST = '192.168.29.187'; 
+  const HOST = '192.168.119.17'; 
   const PORT = 3000;
 
   https.createServer(options, server).listen(PORT, HOST, (err) => {
     if (err) throw err;
-    console.log(`> Ready on https://192.168.29.187:${PORT}`);  
+    console.log(`> Ready on https://192.168.119.17:${PORT}`);  
   });
 });
